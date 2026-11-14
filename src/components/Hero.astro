@@ -1,6 +1,10 @@
 ---
 import p from "../data/proposta.json";
+import { hasPublic } from "../lib/assets";
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const heroImg = "img/hero-braian.webp";
+const hasHero = hasPublic(heroImg);
+const hasPdf = hasPublic(p.pdf);
 ---
 <section id="topo" class="hero tone-choc corners">
   <div class="wrap hero__grid">
@@ -8,7 +12,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
     <h1 class="display hero__title" data-fade>
       Se o músculo tem nutrição, <em>por que a mente não?</em>
     </h1>
-    <div class="hero__foot">
+    <div class="hero__foot" data-hero-in>
       <dl class="hero__meta label">
         <div><dt>Cliente</dt><dd>{p.cliente}</dd></div>
         <div><dt>Proponente</dt><dd>{p.proponente}</dd></div>
@@ -16,30 +20,74 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
         <div><dt>Válida até</dt><dd>{p.validade}</dd></div>
       </dl>
       <div class="hero__ctas">
-        <a class="btn btn--solid" href="#investimento">Ver investimento</a>
-        <a class="btn" href={`${base}/${p.pdf}`} download>Baixar PDF</a>
+        <a class="btn btn--solid" href="#investimento">
+          Ver investimento
+          <svg class="btn__icon btn__icon--down" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1v11M2 7.5 7 12.5l5-5" fill="none" stroke="currentColor" stroke-width="2" /></svg>
+        </a>
+        {hasPdf && (
+          <a class="btn" href={`${base}/${p.pdf}`} download>
+            Baixar PDF
+            <svg class="btn__icon btn__icon--down" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1v8M3 5.5 7 9.5l4-4M1.5 13h11" fill="none" stroke="currentColor" stroke-width="2" /></svg>
+          </a>
+        )}
       </div>
     </div>
-    <figure class="visual hero__visual tone-pink" aria-hidden="true">
-      <img src={`${base}/img/hero-braian.webp`} alt="" loading="eager" onerror="this.remove()" />
+    <figure class:list={["visual hero__visual tone-pink", { "visual--empty": !hasHero }]} aria-hidden="true" data-hero-visual>
+      {hasHero
+        ? <img src={`${base}/${heroImg}`} alt="" width="1200" height="1200" fetchpriority="high" decoding="async" />
+        : <span class="label visual__tag">Fig. 01 — Braian 3D</span>}
     </figure>
   </div>
 </section>
 
 <style>
-  .hero { min-height: 100svh; display: flex; align-items: end; padding-block: 140px 56px; overflow: hidden; }
-  .hero__grid { display: grid; gap: 40px; width: 100%; position: relative; }
-  .hero__eyebrow { color: var(--baits-yellow); }
-  .hero__title { max-width: 12ch; color: var(--baits-pink); position: relative; z-index: 2; }
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex; align-items: end;
+    padding-block: clamp(104px, 15vh, 160px) clamp(56px, 9vh, 96px);
+    overflow: hidden;
+  }
+  .hero__grid {
+    display: grid; width: 100%;
+    grid-template-columns: minmax(0, 1fr) clamp(260px, 29vw, 480px);
+    grid-template-areas:
+      "eyebrow visual"
+      "title   visual"
+      "foot    foot";
+    column-gap: clamp(24px, 4vw, 72px);
+    row-gap: clamp(20px, 3.4vh, 40px);
+    align-items: end;
+  }
+  .hero__eyebrow { grid-area: eyebrow; color: var(--baits-yellow); }
+  .hero__title {
+    grid-area: title;
+    font-size: clamp(3.25rem, min(9vw, 15vh), 11.5rem);
+    max-width: 11ch;
+    color: var(--baits-pink);
+  }
   .hero__title em { font-style: normal; color: var(--baits-pink-50); }
-  .hero__foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 32px; position: relative; z-index: 2; }
-  .hero__meta { display: grid; grid-template-columns: repeat(4, auto); gap: 8px 40px; margin: 0; }
-  .hero__meta dt { opacity: 0.6; }
-  .hero__meta dd { margin: 4px 0 0; color: var(--baits-pink-50); }
+  .hero__foot {
+    grid-area: foot;
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 28px 48px;
+    padding-top: clamp(20px, 3vh, 32px);
+    border-top: 1px solid color-mix(in srgb, var(--baits-pink) 22%, transparent);
+  }
+  .hero__meta { display: grid; grid-template-columns: repeat(4, auto); gap: 12px clamp(24px, 3.5vw, 56px); margin: 0; }
+  .hero__meta dt { color: color-mix(in srgb, var(--baits-pink-50) 64%, var(--baits-chocolate)); }
+  .hero__meta dd { margin: 6px 0 0; color: var(--baits-pink-50); }
   .hero__ctas { display: flex; gap: 12px; flex-wrap: wrap; }
-  .hero__visual { position: absolute; right: 0; top: -40px; width: min(42vw, 620px); aspect-ratio: 1; opacity: 0.95; z-index: 1; }
+  .hero__visual { grid-area: visual; align-self: stretch; aspect-ratio: auto; min-height: 260px; }
+
   @media (max-width: 900px) {
-    .hero__visual { position: relative; top: 0; width: 100%; aspect-ratio: 4/3; order: -1; }
+    .hero__grid {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: "visual" "eyebrow" "title" "foot";
+    }
+    .hero__visual { aspect-ratio: 16 / 9; min-height: 0; }
     .hero__meta { grid-template-columns: repeat(2, auto); }
+  }
+  @media (max-width: 480px) {
+    .hero__ctas, .hero__ctas .btn { width: 100%; }
   }
 </style>

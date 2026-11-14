@@ -1,10 +1,10 @@
 ---
 import p from "../data/proposta.json";
 ---
-<section class="section porque tone-violet corners">
+<section class="section porque tone-violet corners sheet">
   <div class="wrap porque__grid">
-    <div>
-      <p class="label">Por que nós</p>
+    <div class="porque__intro" data-sticky>
+      <p class="label eyebrow">Sinal 07 · Por que nós</p>
       <h2 class="h2 porque__title" data-fade>Pensar dá trabalho. A gente gosta.</h2>
       <p class="porque__who"><strong>{p.proponente}</strong><br />{p.papel}</p>
     </div>
@@ -21,12 +21,18 @@ import p from "../data/proposta.json";
 </section>
 
 <style>
-  .porque__grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px; }
-  .porque__title { margin: 20px 0 32px; max-width: 12ch; font-size: clamp(2.5rem, 5.5vw, 5.5rem); }
-  .porque__who { font-size: 1.125rem; }
-  .porque__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
-  .porque__list li { display: grid; grid-template-columns: 56px 1fr; gap: 4px 16px; padding: 24px 0; border-top: 2px solid var(--baits-chocolate); }
-  .porque__list h3 { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.75rem, 3vw, 2.75rem); line-height: 1; }
+  .porque__grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(40px, 5vw, 96px); }
+  .porque__intro { align-self: start; position: sticky; top: 128px; }
+  .porque__title { margin-bottom: 32px; max-width: 12ch; font-size: clamp(2.5rem, 5.4vw, 5.5rem); }
+  .porque__who { font-size: 1.125rem; line-height: 1.5; }
+  .porque__list { list-style: none; margin: 0; padding: 0; display: grid; }
+  .porque__list li { display: grid; grid-template-columns: 56px 1fr; gap: 8px 16px; padding: clamp(22px, 2.4vw, 32px) 0; border-top: 2px solid currentColor; }
+  .porque__list li:last-child { border-bottom: 2px solid currentColor; }
+  .porque__list .label { padding-top: 0.6em; }
+  .porque__list h3 { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.75rem, 3vw, 2.75rem); line-height: 1; letter-spacing: -0.025em; }
   .porque__list p { grid-column: 2; }
-  @media (max-width: 900px) { .porque__grid { grid-template-columns: 1fr; } }
+  @media (max-width: 900px) {
+    .porque__grid { grid-template-columns: 1fr; }
+    .porque__intro { position: static; }
+  }
 </style>

@@ -1,16 +1,20 @@
 ---
 import p from "../data/proposta.json";
 ---
-<section id="condicoes" class="section condicoes tone-choc corners">
+<section id="condicoes" class="section condicoes tone-choc corners sheet">
   <div class="wrap condicoes__grid">
-    <div>
-      <p class="label condicoes__eyebrow">Condições</p>
+    <div class="condicoes__intro" data-sticky>
+      <p class="label eyebrow">Sinal 08 · Condições</p>
       <h2 class="h2 condicoes__title" data-fade>O combinado, sem letra miúda.</h2>
     </div>
     <div class="condicoes__list">
       {p.condicoes.map((c, i) => (
         <details open={i === 0}>
-          <summary><span class="label">{String(i + 1).padStart(2, "0")}</span>{c.titulo}</summary>
+          <summary>
+            <span class="label condicoes__n">{String(i + 1).padStart(2, "0")}</span>
+            <span class="condicoes__t">{c.titulo}</span>
+            <span class="condicoes__icon" aria-hidden="true"></span>
+          </summary>
           <p>{c.texto}</p>
         </details>
       ))}
@@ -19,15 +23,43 @@ import p from "../data/proposta.json";
 </section>
 
 <style>
-  .condicoes__grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 64px; }
-  .condicoes__eyebrow { color: var(--baits-yellow); }
-  .condicoes__title { margin-top: 20px; color: var(--baits-pink); max-width: 12ch; }
-  details { border-top: 1.5px solid color-mix(in srgb, var(--baits-pink) 40%, transparent); padding: 22px 0; }
-  details:last-child { border-bottom: 1.5px solid color-mix(in srgb, var(--baits-pink) 40%, transparent); }
-  summary { cursor: pointer; list-style: none; display: flex; gap: 20px; align-items: baseline; font-family: var(--font-display); font-weight: 800; font-size: clamp(1.5rem, 2.6vw, 2.25rem); color: var(--baits-pink); }
+  .condicoes__grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: clamp(40px, 5vw, 96px); }
+  .condicoes__intro { align-self: start; position: sticky; top: 128px; }
+  .condicoes__title { color: var(--baits-pink); max-width: 12ch; }
+  details { border-top: 1.5px solid color-mix(in srgb, var(--baits-pink) 35%, transparent); }
+  details:last-child { border-bottom: 1.5px solid color-mix(in srgb, var(--baits-pink) 35%, transparent); }
+  summary {
+    cursor: pointer; list-style: none;
+    display: flex; gap: 20px; align-items: baseline;
+    padding-block: 24px;
+    font-family: var(--font-display); font-weight: 800; font-size: clamp(1.5rem, 2.6vw, 2.25rem); line-height: 1.05; letter-spacing: -0.02em;
+    color: var(--baits-pink);
+    transition: color 0.3s var(--ease-out);
+  }
   summary::-webkit-details-marker { display: none; }
-  summary::after { content: "+"; margin-left: auto; font-family: var(--font-label); }
-  details[open] summary::after { content: "−"; }
-  details p { margin-top: 14px; max-width: 60ch; opacity: 0.9; padding-left: 52px; }
-  @media (max-width: 900px) { .condicoes__grid { grid-template-columns: 1fr; } details p { padding-left: 0; } }
+  summary:hover { color: var(--baits-yellow); }
+  summary:focus-visible { outline-offset: 2px; border-radius: 4px; }
+  .condicoes__n { color: var(--baits-yellow); flex: none; width: 32px; }
+  .condicoes__t { flex: 1; }
+  .condicoes__icon { position: relative; flex: none; width: 18px; height: 18px; align-self: center; }
+  .condicoes__icon::before, .condicoes__icon::after {
+    content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 2px; margin-top: -1px;
+    background: currentColor; transition: transform 0.5s var(--ease-out);
+  }
+  .condicoes__icon::after { transform: rotate(90deg); }
+  details[open] .condicoes__icon::after { transform: rotate(0deg); }
+  details p { padding: 0 0 26px 52px; max-width: 60ch; color: color-mix(in srgb, var(--baits-pink-50) 90%, var(--baits-chocolate)); }
+
+  /* Abertura animada onde houver suporte (Chrome 131+); nos demais, abre seco */
+  details::details-content {
+    block-size: 0; overflow: clip;
+    transition: block-size 0.5s var(--ease-out), content-visibility 0.5s allow-discrete;
+  }
+  details[open]::details-content { block-size: auto; }
+
+  @media (max-width: 900px) {
+    .condicoes__grid { grid-template-columns: 1fr; }
+    .condicoes__intro { position: static; }
+    details p { padding-left: 0; }
+  }
 </style>

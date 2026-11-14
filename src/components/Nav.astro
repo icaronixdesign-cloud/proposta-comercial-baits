@@ -8,10 +8,10 @@ const links = [
 ---
 <header class="nav">
   <div class="nav__bar">
-    <a href="#topo" class="nav__mark" aria-label="Baits — topo">Baits</a>
-    <nav aria-label="Seções">
+    <a href="#topo" class="nav__mark" aria-label="Baits — voltar ao topo">Baits</a>
+    <nav aria-label="Seções da proposta">
       <ul>
-        {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+        {links.map((l) => <li><a href={l.href} data-nav-link>{l.label}</a></li>)}
       </ul>
     </nav>
     <a class="nav__cta" href="#aceite">Aceitar</a>
@@ -24,20 +24,45 @@ const links = [
   .nav__bar {
     pointer-events: auto;
     display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    padding: 10px 10px 10px 20px;
-    background: color-mix(in srgb, var(--baits-chocolate-90) 88%, transparent);
-    backdrop-filter: blur(12px);
-    border: 1px solid color-mix(in srgb, var(--baits-pink) 25%, transparent);
+    padding: 7px 7px 7px 22px;
+    background: color-mix(in srgb, var(--baits-chocolate-90) 86%, transparent);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid color-mix(in srgb, var(--baits-pink) 22%, transparent);
     border-radius: 999px;
     color: var(--baits-pink-50);
+    --focus: var(--baits-yellow);
   }
-  .nav__mark { font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; letter-spacing: -0.03em; text-decoration: none; color: var(--baits-pink); }
-  ul { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; }
-  ul a { font-family: var(--font-label); font-size: var(--fs-label); letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; opacity: 0.8; }
-  ul a:hover { opacity: 1; color: var(--baits-yellow); }
-  .nav__cta { background: var(--baits-yellow); color: var(--baits-chocolate); font-family: var(--font-title); font-weight: 800; padding: 10px 20px; border-radius: 999px; text-decoration: none; }
+  .nav__mark {
+    font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; line-height: 1;
+    letter-spacing: -0.03em; text-decoration: none; color: var(--baits-pink);
+    padding-block: 6px; border-radius: 6px;
+    transition: color 0.3s var(--ease-out);
+  }
+  .nav__mark:hover { color: var(--baits-yellow); }
+  ul { display: flex; gap: clamp(16px, 2.2vw, 36px); list-style: none; margin: 0; padding: 0; }
+  ul a {
+    position: relative; display: inline-block; padding: 10px 2px; border-radius: 4px;
+    font-family: var(--font-label); font-size: var(--fs-label); letter-spacing: 0.14em; text-transform: uppercase;
+    text-decoration: none; color: color-mix(in srgb, var(--baits-pink-50) 84%, transparent);
+    transition: color 0.3s var(--ease-out);
+  }
+  ul a::after {
+    content: ""; position: absolute; left: 2px; right: 2px; bottom: 4px; height: 1.5px;
+    background: currentColor; transform: scaleX(0); transform-origin: right;
+    transition: transform 0.5s var(--ease-out);
+  }
+  ul a:hover, ul a[aria-current] { color: var(--baits-yellow); }
+  ul a:hover::after, ul a[aria-current]::after { transform: scaleX(1); transform-origin: left; }
+  .nav__cta {
+    display: inline-flex; align-items: center; min-height: 44px;
+    background: var(--baits-yellow); color: var(--baits-chocolate);
+    font-family: var(--font-title); font-weight: 800; line-height: 1;
+    padding: 0 22px; border-radius: 999px; text-decoration: none;
+    transition: background-color 0.3s var(--ease-out);
+  }
   .nav__cta:hover { background: var(--baits-pink); }
-  .nav__progress { height: 2px; margin: 8px 28px 0; background: transparent; }
+  .nav__progress { height: 2px; margin: 8px 32px 0; border-radius: 2px; overflow: hidden; }
   .nav__progress span { display: block; height: 100%; background: var(--baits-yellow); transform-origin: left; transform: scaleX(0); }
   @media (max-width: 767px) { nav { display: none; } }
 </style>

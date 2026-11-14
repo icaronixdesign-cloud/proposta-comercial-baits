@@ -4,184 +4,359 @@ import { SplitText } from "gsap/SplitText";
 import Lenis from "lenis";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+/** Momento (s) em que a cortina do preloader abre — casa com a animação CSS em global.css */
+const PRELOADER_OUT = 1.25;
 
-// 1. Scroll suave sincronizado com o ScrollTrigger
+const $ = (sel: string, ctx: ParentNode = document) => ctx.querySelector<HTMLElement>(sel);
+const $$ = (sel: string, ctx: ParentNode = document) => Array.from(ctx.querySelectorAll<HTMLElement>(sel));
+
+/* ------------------------------------------------------------------ */
+/* 1. Scroll suave (Lenis) sincronizado com o ScrollTrigger            */
+/* ------------------------------------------------------------------ */
 let lenis: Lenis | null = null;
 if (!reduce) {
   lenis = new Lenis({ lerp: 0.1 });
   lenis.on("scroll", ScrollTrigger.update);
   gsap.ticker.add((t) => lenis?.raf(t * 1000));
   gsap.ticker.lagSmoothing(0);
-
-  // âncoras internas com scroll suave
-  document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((a) => {
-    a.addEventListener("click", (e) => {
-      const id = a.getAttribute("href");
-      if (!id || id === "#") return;
-      const target = document.querySelector<HTMLElement>(id);
-      if (!target) return;
-      e.preventDefault();
-      lenis?.scrollTo(target, { offset: -20 });
-    });
-  });
 }
 
-// Barra de progresso da página
-const pageBar = document.querySelector<HTMLElement>("[data-page-progress]");
-if (pageBar) {
-  ScrollTrigger.create({
-    start: 0,
-    end: "max",
-    onUpdate: (st) => gsap.set(pageBar, { scaleX: st.progress }),
-  });
+// Âncoras internas: rolagem suave e foco no destino (teclado e leitor de tela)
+const scrollAnchor = (el: HTMLElement) =>
+  el.parentElement?.classList.contains("pin-spacer") ? el.parentElement : el;
+const focusTarget = (el: HTMLElement) => {
+  if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "-1");
+  el.focus({ preventScroll: true });
+};
+document.addEventListener("click", (e) => {
+  if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  const a = (e.target as Element | null)?.closest<HTMLAnchorElement>('a[href^="#"]');
+  const hash = a?.getAttribute("href");
+  if (!a || !hash || hash.length < 2) return;
+  const target = document.getElementById(decodeURIComponent(hash.slice(1)));
+  if (!target) return;
+  e.preventDefault();
+  history.pushState(null, "", hash);
+  if (lenis) {
+    lenis.scrollTo(scrollAnchor(target), {
+      duration: 1.4,
+      easing: (t) => 1 - Math.pow(1 - t, 4),
+      onComplete: () => focusTarget(target),
+    });
+  } else {
+    scrollAnchor(target).scrollIntoView();
+    focusTarget(target);
+  }
+});
+
+/* ------------------------------------------------------------------ */
+/* 2. Entrada do hero, sincronizada com a saída do preloader            */
+/* ------------------------------------------------------------------ */
+if (!reduce) {
+  const visual = $("[data-hero-visual]");
+  const foot = $("[data-hero-in]");
+  const tl = gsap.timeline({ delay: PRELOADER_OUT });
+  if (visual) {
+    const r = getComputedStyle(visual).borderRadius || "24px";
+    tl.fromTo(
+      visual,
+      { clipPath: `inset(100% 0% 0% 0% round ${r})` },
+      { clipPath: `inset(0% 0% 0% 0% round ${r})`, duration: 1.4, ease: "expo.inOut", clearProps: "clipPath" },
+      0
+    );
+  }
+  if (foot) tl.from(foot.children, { y: 28, opacity: 0, duration: 1.1, ease: "expo.out", stagger: 0.1 }, 0.45);
 }
 
-document.fonts.ready.then(() => {
-  if (!reduce) {
-    // 2. Fade-in e fade-out tipográfico
-    document.querySelectorAll<HTMLElement>("[data-fade]").forEach((el) => {
-      SplitText.create(el, {
-        type: "lines",
-        mask: "lines",
-        autoSplit: true,
-        onSplit: (self) =>
-          gsap.from(self.lines, {
-            yPercent: 100,
-            opacity: 0,
-            filter: "blur(8px)",
-            duration: 0.9,
-            stagger: 0.06,
-            ease: "power3.out",
-            scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none reverse" },
-          }),
-      });
-      gsap.to(el, {
-        opacity: 0.1,
-        y: -40,
-        ease: "none",
-        scrollTrigger: { trigger: el, start: "top 25%", end: "top -10%", scrub: true },
-      });
-    });
+/* ------------------------------------------------------------------ */
+/* 3. Link da seção atual na navegação                                  */
+/* ------------------------------------------------------------------ */
+const navMap = new Map<Element, HTMLElement>();
+$$("[data-nav-link]").forEach((link) => {
+  const sec = document.getElementById(link.getAttribute("href")!.slice(1));
+  if (sec) navMap.set(sec, link);
+});
+const navIO = new IntersectionObserver(
+  (entries) =>
+    entries.forEach((en) => {
+      const link = navMap.get(en.target);
+      if (!link) return;
+      if (en.isIntersecting) link.setAttribute("aria-current", "location");
+      else link.removeAttribute("aria-current");
+    }),
+  { rootMargin: "-50% 0px -50% 0px" }
+);
+navMap.forEach((_, sec) => navIO.observe(sec));
 
-    // Palavras que acendem (manifesto)
-    document.querySelectorAll<HTMLElement>("[data-words]").forEach((el) => {
-      const split = SplitText.create(el, { type: "words" });
-      gsap.fromTo(
-        split.words,
-        { opacity: 0.15 },
-        {
-          opacity: 1,
-          stagger: 0.1,
-          ease: "none",
-          scrollTrigger: { trigger: el, start: "top 80%", end: "bottom 45%", scrub: true },
+/* ------------------------------------------------------------------ */
+/* 4. Trilhos horizontais (Método, Entregáveis, Cronograma)             */
+/*    ≥ 768 px e sem reduced motion: seção fixada, trilho anda no scroll */
+/*    Demais casos: carrossel nativo com barra e contador sincronizados  */
+/* ------------------------------------------------------------------ */
+const railUI = new WeakMap<HTMLElement, { bar: HTMLElement | null; counter: HTMLElement | null; total: number }>();
+const updateRailUI = (section: HTMLElement, progress: number) => {
+  let ui = railUI.get(section);
+  if (!ui) {
+    ui = {
+      bar: $("[data-progress]", section),
+      counter: $("[data-counter]", section),
+      total: $("[data-track]", section)?.children.length ?? 1,
+    };
+    railUI.set(section, ui);
+  }
+  if (ui.bar) gsap.set(ui.bar, { scaleX: progress });
+  if (ui.counter) {
+    const n = String(Math.min(ui.total, Math.round(progress * (ui.total - 1)) + 1)).padStart(2, "0");
+    if (ui.counter.textContent !== n) ui.counter.textContent = n;
+  }
+};
+
+function initRails() {
+  const sections = $$("[data-horizontal]");
+  const mm = gsap.matchMedia();
+
+  mm.add(
+    {
+      pin: "(min-width: 768px) and (min-height: 560px) and (prefers-reduced-motion: no-preference)",
+      native: "(max-width: 767px), (max-height: 559px), (prefers-reduced-motion: reduce)",
+    },
+    (ctx) => {
+      const { pin } = ctx.conditions as { pin: boolean };
+      const cleanups: Array<() => void> = [];
+
+      sections.forEach((section) => {
+        const track = $("[data-track]", section);
+        if (!track) return;
+        const viewport = track.parentElement!;
+
+        if (!pin) {
+          const onScroll = () => {
+            const max = track.scrollWidth - track.clientWidth;
+            updateRailUI(section, max > 0 ? track.scrollLeft / max : 0);
+          };
+          track.addEventListener("scroll", onScroll, { passive: true });
+          onScroll();
+          cleanups.push(() => track.removeEventListener("scroll", onScroll));
+          return;
         }
-      );
+
+        // A classe muda o layout (seção = 100vh); precisa vir antes de qualquer medida
+        section.classList.add("is-pinned");
+        track.removeAttribute("tabindex");
+        cleanups.push(() => {
+          section.classList.remove("is-pinned", "is-stuck");
+          track.setAttribute("tabindex", "0");
+        });
+
+        const distance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
+        const move = gsap.to(track, {
+          x: () => -distance(),
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: () => "+=" + distance(),
+            pin: true,
+            scrub: 0.8,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            toggleClass: "is-stuck",
+            onUpdate: (st) => updateRailUI(section, st.progress),
+          },
+        });
+
+        // Títulos dos painéis e barras do Gantt: os que já estão na tela entram com a seção;
+        // os que estão fora entram quando o trilho os traz (containerAnimation).
+        const vp = viewport.getBoundingClientRect();
+        $$("[data-panel-title], [data-bar]", track).forEach((item) => {
+          const isBar = item.hasAttribute("data-bar");
+          const onScreen = item.getBoundingClientRect().left < vp.right - vp.width * 0.06;
+          const st: ScrollTrigger.Vars = onScreen
+            ? { trigger: section, start: "top 55%", toggleActions: "play none none reverse" }
+            : { trigger: item, containerAnimation: move, start: "left 94%", toggleActions: "play none none reverse" };
+          if (isBar) {
+            gsap.fromTo(
+              item,
+              { clipPath: "inset(0% 100% 0% 0% round 999px)" },
+              { clipPath: "inset(0% 0% 0% 0% round 999px)", duration: 1, ease: "expo.out", scrollTrigger: st }
+            );
+          } else {
+            gsap.from(item, { x: 90, opacity: 0, duration: 1.1, ease: "expo.out", scrollTrigger: st });
+          }
+        });
+      });
+
+      // Quando os pins são recriados (resize), reordena para recalcular de cima para baixo
+      ScrollTrigger.sort();
+      return () => cleanups.forEach((fn) => fn());
+    }
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 5. Tipografia: fade de entrada/saída, palavras que acendem, cartões  */
+/* ------------------------------------------------------------------ */
+function initTypography() {
+  if (reduce) return;
+
+  $$("[data-fade]").forEach((el) => {
+    const inHero = !!el.closest(".hero");
+    SplitText.create(el, {
+      type: "lines",
+      mask: "lines",
+      linesClass: "split-line",
+      autoSplit: true,
+      onSplit: (self) =>
+        gsap.from(self.lines, {
+          yPercent: 110,
+          opacity: 0,
+          filter: "blur(8px)",
+          duration: 1.15,
+          stagger: 0.08,
+          ease: "expo.out",
+          ...(inHero
+            ? { delay: PRELOADER_OUT }
+            : { scrollTrigger: { trigger: el, start: "top 88%", toggleActions: "play none none reverse" } }),
+        }),
     });
 
-    // Cartões entram em sequência
-    gsap.utils.toArray<HTMLElement>("[data-card]").forEach((card, i) => {
-      gsap.from(card, {
-        y: 60,
-        opacity: 0,
-        duration: 0.8,
-        delay: (i % 4) * 0.08,
-        ease: "power3.out",
-        scrollTrigger: { trigger: card, start: "top 90%" },
+    // Saída: só quando o bloco já está deixando a tela pelo topo.
+    // Em seção fixada ou coluna sticky o título fica parado na tela, então não sai.
+    if (el.closest("[data-horizontal], [data-sticky]")) return;
+    gsap.to(el, {
+      opacity: 0,
+      y: -32,
+      filter: "blur(4px)",
+      ease: "none",
+      // clamp(): no hero o bloco já nasce acima de "bottom 30%"; sem isso ele abriria a página apagado
+      scrollTrigger: { trigger: el, start: "clamp(bottom 30%)", end: "clamp(bottom 2%)", scrub: true },
+    });
+  });
+
+  // Palavras que acendem (manifesto)
+  $$("[data-words]").forEach((el) => {
+    const split = SplitText.create(el, { type: "words" });
+    gsap.fromTo(
+      split.words,
+      { opacity: 0.14 },
+      {
+        opacity: 1,
+        stagger: 0.1,
+        ease: "none",
+        scrollTrigger: { trigger: el, start: "top 78%", end: "bottom 42%", scrub: 0.6 },
+      }
+    );
+  });
+
+  // Cartões entram em sequência, grupo a grupo
+  const groups = new Map<Element, HTMLElement[]>();
+  $$("[data-card]").forEach((card) => {
+    const parent = card.parentElement!;
+    groups.set(parent, [...(groups.get(parent) ?? []), card]);
+  });
+  groups.forEach((cards, parent) => {
+    gsap.from(cards, {
+      y: 64,
+      opacity: 0,
+      duration: 1.1,
+      ease: "expo.out",
+      stagger: 0.09,
+      scrollTrigger: { trigger: parent, start: "top 82%" },
+    });
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* 6. Preços: contador na entrada e chave "à vista −5%"                */
+/* ------------------------------------------------------------------ */
+function initPrices() {
+  const fmt = (n: number) => Math.round(n).toLocaleString("pt-BR");
+  const toggle = document.querySelector<HTMLInputElement>("[data-vista-toggle]");
+  const status = $("[data-vista-status]");
+  const box = $("[data-investimento]");
+
+  const prices = $$("[data-count]").map((el) => ({
+    el,
+    sr: el.closest(".pack__price")?.querySelector<HTMLElement>("[data-price-sr]") ?? null,
+    full: Number(el.dataset.count),
+    vista: Number(el.dataset.vista),
+    state: { v: Number(el.dataset.count) },
+    started: reduce,
+  }));
+  type Price = (typeof prices)[number];
+
+  const target = (p: Price) => (toggle?.checked ? p.vista : p.full);
+  const render = (p: Price) => (p.el.textContent = fmt(p.state.v));
+  const tweenTo = (p: Price, duration: number, ease: string) =>
+    gsap.to(p.state, {
+      v: target(p),
+      duration: reduce ? 0 : duration,
+      ease,
+      overwrite: true,
+      onUpdate: () => render(p),
+      onComplete: () => render(p),
+    });
+
+  if (!reduce) {
+    prices.forEach((p) => {
+      p.state.v = 0;
+      render(p);
+      // end "max": nunca fica "depois do fim", então dispara mesmo se a página abrir no meio
+      ScrollTrigger.create({
+        trigger: p.el,
+        start: "top 94%",
+        end: "max",
+        once: true,
+        onEnter: () => {
+          p.started = true;
+          tweenTo(p, 1.8, "expo.out");
+        },
       });
     });
   }
 
-  // 3. Scroll horizontal fixado (só em telas >= 768 px e sem reduced motion)
-  const mm = gsap.matchMedia();
-  mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
-    document.querySelectorAll<HTMLElement>("[data-horizontal]").forEach((section) => {
-      const track = section.querySelector<HTMLElement>("[data-track]");
-      if (!track) return;
-      section.classList.add("is-pinned");
-      const bar = section.querySelector<HTMLElement>("[data-progress]");
-      const counter = section.querySelector<HTMLElement>("[data-counter]");
-      const panels = track.children.length;
-      const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
-
-      const move = gsap.to(track, {
-        x: () => -distance(),
-        ease: "none",
-        scrollTrigger: {
-          trigger: section,
-          start: "top top",
-          end: () => "+=" + distance(),
-          pin: true,
-          scrub: 1,
-          invalidateOnRefresh: true,
-          onUpdate: (st) => {
-            if (bar) gsap.set(bar, { scaleX: st.progress });
-            if (counter) {
-              const n = Math.min(panels, Math.floor(st.progress * panels) + 1);
-              counter.textContent = String(n).padStart(2, "0");
-            }
-          },
-        },
-      });
-
-      track.querySelectorAll<HTMLElement>("[data-panel-title]").forEach((t) => {
-        gsap.from(t, {
-          opacity: 0,
-          x: 120,
-          ease: "none",
-          scrollTrigger: { trigger: t, containerAnimation: move, start: "left 95%", end: "left 55%", scrub: true },
-        });
-      });
-
-      track.querySelectorAll<HTMLElement>("[data-bar]").forEach((b) => {
-        gsap.from(b, {
-          scaleX: 0,
-          transformOrigin: "left center",
-          opacity: 0,
-          ease: "none",
-          scrollTrigger: { trigger: b, containerAnimation: move, start: "left 90%", end: "left 60%", scrub: true },
-        });
-      });
-
-      return () => section.classList.remove("is-pinned");
+  toggle?.addEventListener("change", () => {
+    const on = toggle.checked;
+    box?.classList.toggle("is-vista", on);
+    prices.forEach((p) => {
+      if (p.sr) p.sr.textContent = `R$ ${fmt(target(p))}`;
+      if (p.started) tweenTo(p, 0.9, "power3.out");
     });
+    if (status) status.textContent = on ? "Valores à vista, com 5% de desconto." : "Valores sem desconto.";
   });
+}
 
+/* ------------------------------------------------------------------ */
+/* 7. Barra de progresso da página                                      */
+/* ------------------------------------------------------------------ */
+function initPageProgress() {
+  const bar = $("[data-page-progress]");
+  if (!bar) return;
+  ScrollTrigger.create({
+    start: 0,
+    end: "max",
+    onUpdate: (st) => gsap.set(bar, { scaleX: st.progress }),
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* Ordem importa: pins primeiro (criam o espaço), depois o que vem       */
+/* abaixo deles, por último o que depende da altura total da página.     */
+/* ------------------------------------------------------------------ */
+let started = false;
+const start = () => {
+  if (started) return;
+  started = true;
+  initRails();
+  initTypography();
+  initPrices();
+  initPageProgress();
   ScrollTrigger.refresh();
-});
-
-// 4. Contadores de preço (o valor final já está no HTML)
-const fmt = (n: number) => Math.round(n).toLocaleString("pt-BR");
-const counters = Array.from(document.querySelectorAll<HTMLElement>("[data-count]"));
-counters.forEach((el) => {
-  const end = Number(el.dataset.count);
-  const state = { v: 0 };
-  gsap.to(state, {
-    v: end,
-    duration: reduce ? 0 : 1.4,
-    ease: "expo.out",
-    scrollTrigger: { trigger: el, start: "top 80%", once: true },
-    onUpdate: () => {
-      el.textContent = fmt(state.v);
-    },
-  });
-});
-
-// Chave "à vista −5%"
-const toggle = document.querySelector<HTMLInputElement>("[data-vista-toggle]");
-toggle?.addEventListener("change", () => {
-  counters.forEach((el) => {
-    const target = Number(toggle.checked ? el.dataset.vista : el.dataset.count);
-    const from = Number(el.textContent?.replace(/\D/g, "") || 0);
-    const state = { v: from };
-    gsap.to(state, {
-      v: target,
-      duration: reduce ? 0 : 0.8,
-      ease: "power3.out",
-      onUpdate: () => {
-        el.textContent = fmt(state.v);
-      },
-    });
-  });
-});
+};
+document.fonts.ready.then(start);
+// Rede lenta: não segura a página esperando as fontes
+setTimeout(start, 2500);
+window.addEventListener("load", () => ScrollTrigger.refresh());

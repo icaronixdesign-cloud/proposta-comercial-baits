@@ -1,14 +1,14 @@
 ---
 import p from "../data/proposta.json";
 ---
-<section class="section desafio tone-choc corners">
+<section class="section desafio tone-choc corners sheet">
   <div class="wrap">
-    <p class="label desafio__eyebrow">O desafio</p>
+    <p class="label eyebrow">Sinal 02 · O desafio</p>
     <h2 class="h2 desafio__title" data-fade>Fazer existir uma categoria que ainda não existe.</h2>
     <ol class="desafio__grid">
       {p.desafio.map((d) => (
         <li class="desafio__card" data-card>
-          <span class="label">{d.n}</span>
+          <span class="label desafio__n">{d.n}</span>
           <h3>{d.titulo}</h3>
           <p>{d.texto}</p>
         </li>
@@ -18,12 +18,22 @@ import p from "../data/proposta.json";
 </section>
 
 <style>
-  .desafio__eyebrow { color: var(--baits-yellow); }
-  .desafio__title { margin-top: 24px; max-width: 18ch; color: var(--baits-pink); }
-  .desafio__grid { list-style: none; margin: 72px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); }
-  .desafio__card { border-top: 2px solid var(--baits-pink); padding-top: 20px; display: grid; gap: 12px; align-content: start; }
-  .desafio__card h3 { font-family: var(--font-display); font-weight: 800; font-size: 1.75rem; line-height: 1; color: var(--baits-pink); }
-  .desafio__card p { opacity: 0.85; }
+  .desafio__title { max-width: 18ch; color: var(--baits-pink); }
+  .desafio__grid { list-style: none; margin: clamp(56px, 6vw, 96px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(32px, 3vw, 48px) var(--gutter); }
+  .desafio__card { position: relative; padding-top: 22px; display: grid; gap: 12px; align-content: start; }
+  .desafio__card::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: color-mix(in srgb, var(--baits-pink) 45%, transparent);
+  }
+  .desafio__card::after {
+    content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+    background: var(--baits-yellow); transform: scaleX(0.18); transform-origin: left;
+    transition: transform 0.8s var(--ease-out);
+  }
+  .desafio__card:hover::after { transform: scaleX(1); }
+  .desafio__n { color: var(--baits-yellow); }
+  .desafio__card h3 { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.5rem, 2vw, 1.875rem); line-height: 1.02; letter-spacing: -0.02em; color: var(--baits-pink); }
+  .desafio__card p { color: color-mix(in srgb, var(--baits-pink-50) 88%, var(--baits-chocolate)); max-width: 34ch; }
   @media (max-width: 900px) { .desafio__grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 560px) { .desafio__grid { grid-template-columns: 1fr; } }
 </style>

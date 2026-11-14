@@ -1,18 +1,18 @@
 ---
 import p from "../data/proposta.json";
 ---
-<section id="conteudo" class="section manifesto tone-pink50 corners">
+<section id="conteudo" class="section manifesto tone-pink50 corners sheet">
   <div class="wrap">
-    <p class="label">Sinal 01 · Exaustão cognitiva</p>
+    <p class="label eyebrow">Sinal 01 · Exaustão cognitiva</p>
     <p class="manifesto__text h1" data-words>{p.manifesto}</p>
-    <div class="manifesto__chips label">
-      <span>Quem programa</span><span>Quem cria</span><span>Quem resolve problemas</span>
-    </div>
+    <ul class="manifesto__chips label" aria-label="Para quem">
+      <li>Quem programa</li><li>Quem cria</li><li>Quem resolve problemas</li>
+    </ul>
   </div>
 </section>
 
 <style>
-  .manifesto__text { margin-top: 40px; font-size: clamp(2rem, 5.2vw, 5.4rem); line-height: 1.02; max-width: 22ch; }
-  .manifesto__chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 56px; }
-  .manifesto__chips span { border: 1.5px solid currentColor; border-radius: 999px; padding: 8px 16px; }
+  .manifesto__text { margin-top: clamp(24px, 3vw, 40px); font-size: clamp(2rem, 5vw, 5.25rem); line-height: 1.02; max-width: 22ch; }
+  .manifesto__chips { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; margin: clamp(40px, 5vw, 64px) 0 0; padding: 0; }
+  .manifesto__chips li { border: 1.5px solid currentColor; border-radius: 999px; padding: 9px 16px; }
 </style>

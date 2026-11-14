@@ -1,15 +1,20 @@
 ---
 import p from "../data/proposta.json";
+const total = String(p.fases.length).padStart(2, "0");
 ---
-<section id="metodo" class="section h-section metodo tone-choc corners" data-horizontal>
+<section id="metodo" class="section h-section metodo tone-choc corners sheet" data-horizontal>
   <div class="wrap h-head">
     <div>
-      <p class="label metodo__eyebrow">Método · Double Diamond</p>
+      <p class="label eyebrow">Sinal 03 · Método · Double Diamond</p>
       <h2 class="h2" data-fade>Abrir para entender. Fechar para decidir. Duas vezes.</h2>
     </div>
-    <p class="label metodo__count" aria-hidden="true"><span data-counter>01</span> / 04</p>
+    <p class="label h-meta" aria-hidden="true">
+      <span class="h-count"><span data-counter>01</span> / {total}</span>
+      <span class="h-hint--pin">Role para avançar ↓</span>
+      <span class="h-hint--native">Arraste para o lado →</span>
+    </p>
   </div>
-  <div class="h-track" data-track>
+  <div class="h-track" data-track tabindex="0" role="region" aria-label="Fases do método, rolagem horizontal">
     {p.fases.map((f) => (
       <article class={`panel tone-${f.tom}`}>
         <div class="panel__top">
@@ -20,7 +25,7 @@ import p from "../data/proposta.json";
         <ul class="panel__list">
           {f.atividades.map((a) => <li>{a}</li>)}
         </ul>
-        <p class="label panel__cp">{f.checkpoint}</p>
+        <p class="label panel__cp"><span aria-hidden="true">◆</span> {f.checkpoint}</p>
       </article>
     ))}
   </div>
@@ -28,17 +33,16 @@ import p from "../data/proposta.json";
 </section>
 
 <style>
-  .metodo__eyebrow { color: var(--baits-yellow); margin-bottom: 20px; }
-  .metodo .h2 { color: var(--baits-pink); max-width: 16ch; }
-  .metodo__count { white-space: nowrap; }
+  .metodo .h2 { color: var(--baits-pink); }
   .panel {
     width: min(86vw, 1040px); min-height: min(70vh, 640px);
-    border-radius: var(--radius); padding: clamp(24px, 4vw, 56px);
-    display: grid; grid-template-columns: 1.4fr 1fr; grid-template-rows: 1fr auto; gap: 32px;
+    border-radius: var(--radius); padding: clamp(24px, min(4vw, 5.5vh), 56px);
+    display: grid; grid-template-columns: 1.35fr 1fr; grid-template-rows: 1fr auto; gap: clamp(20px, 3vh, 32px) clamp(24px, 3vw, 48px);
   }
-  .panel__name { font-size: clamp(3.5rem, 9vw, 9rem); margin: 16px 0 20px; }
-  .panel__list { list-style: none; margin: 0; padding: 0; align-self: end; display: grid; gap: 10px; }
-  .panel__list li { border-bottom: 1.5px solid currentColor; padding-bottom: 10px; font-weight: 500; }
-  .panel__cp { grid-column: 1 / -1; }
+  .panel__name { font-size: clamp(3.25rem, min(8.6vw, 13vh), 9rem); margin: clamp(10px, 1.6vh, 18px) 0 clamp(12px, 2vh, 20px); }
+  .panel__list { list-style: none; margin: 0; padding: 0; align-self: end; display: grid; gap: clamp(6px, 1.1vh, 10px); }
+  .panel__list li { border-bottom: 1.5px solid currentColor; padding-bottom: clamp(6px, 1.1vh, 10px); font-weight: 500; }
+  .panel__cp { grid-column: 1 / -1; padding-top: 14px; border-top: 1.5px solid currentColor; }
+  .metodo.is-pinned .panel { height: 100%; min-height: 0; }
   @media (max-width: 767px) { .panel { grid-template-columns: 1fr; min-height: 0; } }
 </style>

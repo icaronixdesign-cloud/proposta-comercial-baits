@@ -2,32 +2,46 @@
 import p from "../data/proposta.json";
 const total = 16;
 const weeks = Array.from({ length: total }, (_, i) => i + 1);
+const resumo =
+  "Cronograma: Descobrir semanas 1 a 3, Definir 4 a 5, Desenvolver 6 a 9, Entregar 10 a 12; app de foco 9 a 14 e site no ar até a semana 16 no pacote Flow + Digital. Aprovações nas semanas 3, 5, 7, 9 e entrega na 12.";
 ---
-<section class="section h-section cronograma tone-choc corners" data-horizontal>
+<section class="section h-section cronograma tone-choc corners sheet" data-horizontal>
   <div class="wrap h-head">
     <div>
-      <p class="label cronograma__eyebrow">Cronograma</p>
+      <p class="label eyebrow">Sinal 05 · Cronograma</p>
       <h2 class="h2" data-fade>12 semanas no Flow. 16 com o Digital.</h2>
     </div>
+    <p class="label h-meta" aria-hidden="true">
+      <span>Semanas 1 – {total}</span>
+      <span class="h-hint--pin">Role para avançar ↓</span>
+      <span class="h-hint--native">Arraste para o lado →</span>
+    </p>
   </div>
-  <div class="h-track" data-track>
-    <div class="gantt" role="img" aria-label="Cronograma: Descobrir semanas 1 a 3, Definir 4 a 5, Desenvolver 6 a 9, Entregar 10 a 12; app de foco 9 a 14 e site no ar até a semana 16 no pacote Flow + Digital.">
-      <div class="gantt__weeks" style={`--n:${total}`}>
-        {weeks.map((w) => <span class="label">S{w}</span>)}
-      </div>
-      {p.cronograma.map((r) => (
-        <div class="gantt__row" style={`--n:${total}`}>
-          <span class="gantt__name">{r.nome}</span>
-          <span class={`gantt__bar tone-${r.tom}`} style={`grid-column:${r.inicio} / ${r.fim + 1}`} data-bar>
-            {r.inicio}–{r.fim}
-          </span>
+  <div class="gantt" style={`--n:${total}; --rows:${p.cronograma.length + 1}`}>
+    <ul class="gantt__names" aria-hidden="true">
+      <li class="label gantt__corner">Frente</li>
+      {p.cronograma.map((r) => <li>{r.nome}</li>)}
+      <li>Aprovações</li>
+    </ul>
+    <div class="gantt__viewport">
+      <div class="h-track gantt__track" data-track tabindex="0" role="region" aria-label="Cronograma, rolagem horizontal">
+        <div class="gantt__grid" role="img" aria-label={resumo}>
+          <div class="gantt__row gantt__row--weeks">
+            {weeks.map((w) => <span class="label">S{w}</span>)}
+          </div>
+          {p.cronograma.map((r) => (
+            <div class="gantt__row">
+              <span class={`gantt__bar tone-${r.tom}`} style={`grid-column:${r.inicio} / ${r.fim + 1}`} data-bar>
+                {r.inicio}–{r.fim}
+              </span>
+            </div>
+          ))}
+          <div class="gantt__row gantt__row--marcos">
+            {p.marcos.map((m) => (
+              <span class="gantt__marco label" style={`grid-column:${m.semana}`} data-bar>◆ {m.nome}</span>
+            ))}
+          </div>
         </div>
-      ))}
-      <div class="gantt__row gantt__row--marcos" style={`--n:${total}`}>
-        <span class="gantt__name">Aprovações</span>
-        {p.marcos.map((m) => (
-          <span class="gantt__marco label" style={`grid-column:${m.semana}`} data-bar>◆ {m.nome}</span>
-        ))}
       </div>
     </div>
   </div>
@@ -35,12 +49,40 @@ const weeks = Array.from({ length: total }, (_, i) => i + 1);
 </section>
 
 <style>
-  .cronograma__eyebrow { color: var(--baits-yellow); margin-bottom: 20px; }
-  .cronograma .h2 { color: var(--baits-pink); max-width: 14ch; }
-  .gantt { width: max(1400px, 140vw); display: grid; gap: 14px; padding-left: 200px; position: relative; }
-  .gantt__weeks, .gantt__row { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 4px; position: relative; }
-  .gantt__weeks span { opacity: 0.6; border-left: 1px solid color-mix(in srgb, var(--baits-pink) 25%, transparent); padding-left: 8px; }
-  .gantt__name { position: absolute; left: -200px; width: 190px; top: 50%; transform: translateY(-50%); font-weight: 600; }
-  .gantt__bar { border-radius: 999px; padding: 14px 20px; font-family: var(--font-label); font-size: 0.85rem; font-weight: 500; }
-  .gantt__marco { color: var(--baits-yellow); padding: 12px 0; white-space: nowrap; }
+  .cronograma .h2 { color: var(--baits-pink); }
+  .gantt {
+    --row: clamp(40px, 5.4vh, 52px);
+    --head: 28px;
+    --gap: clamp(6px, 1vh, 10px);
+    --names: clamp(112px, 14vw, 210px);
+    --line: color-mix(in srgb, var(--baits-pink) 16%, transparent);
+    display: grid; grid-template-columns: var(--names) minmax(0, 1fr);
+    padding-left: var(--margin);
+  }
+  .gantt__names {
+    list-style: none; margin: 0; padding: 0 16px 0 0;
+    display: grid; grid-template-rows: var(--head) repeat(var(--rows), var(--row)); row-gap: var(--gap);
+    align-items: center;
+    font-weight: 600; font-size: clamp(0.8125rem, 1.05vw, 1rem); line-height: 1.15;
+    border-right: 1px solid var(--line);
+  }
+  .gantt__corner { color: var(--baits-yellow); }
+  .gantt__viewport { min-width: 0; overflow: hidden; }
+  .gantt__track { padding-inline: 0 var(--margin); scroll-snap-type: none; }
+  .gantt__grid {
+    width: max(1200px, 135vw);
+    display: grid; grid-template-rows: var(--head) repeat(var(--rows), var(--row)); row-gap: var(--gap);
+    background: linear-gradient(to right, var(--line) 1px, transparent 1px) 0 0 / calc(100% / var(--n)) 100%;
+  }
+  .gantt__row { display: grid; grid-template-columns: repeat(var(--n), 1fr); align-items: center; }
+  .gantt__row--weeks span { padding-left: 10px; color: color-mix(in srgb, var(--baits-pink-50) 72%, var(--baits-chocolate)); }
+  .gantt__bar {
+    height: 100%; margin-inline: 3px;
+    display: flex; align-items: center;
+    border-radius: 999px; padding-inline: 18px;
+    font-family: var(--font-label); font-size: 0.85rem; font-weight: 500;
+  }
+  .gantt__marco { color: var(--baits-yellow); padding-left: 8px; white-space: nowrap; }
+  .cronograma.is-pinned .gantt { flex: 1 1 auto; min-height: 0; align-content: center; }
+  @media (max-width: 767px) { .gantt__grid { width: 1100px; } }
 </style>

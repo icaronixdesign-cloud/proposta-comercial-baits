@@ -1,33 +1,44 @@
 ---
 import p from "../data/proposta.json";
+import { hasPublic } from "../lib/assets";
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const total = String(p.entregaveis.length).padStart(2, "0");
 ---
-<section id="entregaveis" class="section h-section entregaveis tone-pink corners" data-horizontal>
+<section id="entregaveis" class="section h-section entregaveis tone-pink corners sheet" data-horizontal>
   <div class="wrap h-head">
     <div>
-      <p class="label">Entregáveis</p>
+      <p class="label eyebrow">Sinal 04 · Entregáveis</p>
       <h2 class="h2" data-fade>Tudo o que sai daqui pronto para usar.</h2>
     </div>
-    <p class="label" aria-hidden="true">Arraste ou role →</p>
+    <p class="label h-meta" aria-hidden="true">
+      <span class="h-count"><span data-counter>01</span> / {total}</span>
+      <span class="h-hint--pin">Role para avançar ↓</span>
+      <span class="h-hint--native">Arraste para o lado →</span>
+    </p>
   </div>
-  <div class="h-track" data-track>
-    {p.entregaveis.map((e, i) => (
-      <article class="card">
-        <figure class={`visual tone-${e.tom}`}>
-          <img src={`${base}/${e.img}`} alt="" loading="lazy" onerror="this.remove()" />
-          <span class="label visual__tag">{String(i + 1).padStart(2, "0")}</span>
-        </figure>
-        <h3 data-panel-title>{e.titulo}</h3>
-        <p>{e.texto}</p>
-      </article>
-    ))}
+  <div class="h-track" data-track tabindex="0" role="region" aria-label="Entregáveis, rolagem horizontal">
+    {p.entregaveis.map((e, i) => {
+      const has = hasPublic(e.img);
+      return (
+        <article class="card">
+          <figure class:list={["visual", `tone-${e.tom}`, { "visual--empty": !has }]}>
+            {has && <img src={`${base}/${e.img}`} alt="" loading="lazy" decoding="async" width="1200" height="900" />}
+            <span class="label visual__tag" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+          </figure>
+          <h3 data-panel-title>{e.titulo}</h3>
+          <p>{e.texto}</p>
+        </article>
+      );
+    })}
   </div>
   <div class="progress" aria-hidden="true"><span data-progress></span></div>
 </section>
 
 <style>
-  .entregaveis .h2 { max-width: 16ch; margin-top: 20px; }
-  .card { width: min(78vw, 460px); display: grid; gap: 12px; }
-  .card .visual { border: 2px solid var(--baits-chocolate); }
-  .card h3 { font-family: var(--font-display); font-weight: 800; font-size: 2rem; line-height: 1; margin-top: 8px; }
+  .card { width: min(78vw, 460px); display: grid; grid-template-rows: auto auto 1fr; gap: 10px; }
+  .card .visual { border: 2px solid var(--baits-chocolate); margin-bottom: 8px; }
+  .card h3 { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.625rem, 2.2vw, 2rem); line-height: 1; letter-spacing: -0.02em; }
+  .card p { max-width: 34ch; }
+  .entregaveis.is-pinned .card { height: 100%; grid-template-rows: minmax(0, 1fr) auto auto; }
+  .entregaveis.is-pinned .card .visual { aspect-ratio: auto; min-height: 0; }
 </style>

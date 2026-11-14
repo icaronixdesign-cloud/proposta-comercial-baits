@@ -1,31 +1,61 @@
 ---
 import p from "../data/proposta.json";
+import { hasPublic } from "../lib/assets";
 const assunto = encodeURIComponent("Aceite da proposta Baits");
 const corpo = encodeURIComponent("Olá! Aceito a proposta Baits no pacote: ");
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const img = "img/braian-aceite.webp";
+const hasImg = hasPublic(img);
 ---
-<section id="aceite" class="section aceite tone-yellow corners">
+<section id="aceite" class="section aceite tone-yellow corners sheet">
   <div class="wrap aceite__grid">
-    <p class="label">Próximo passo</p>
+    <p class="label aceite__eyebrow">Sinal 09 · Próximo passo</p>
     <h2 class="display aceite__title" data-fade>Topa um desafio?</h2>
-    <p class="lead">Escolha o pacote, aceite a proposta e marcamos o kickoff para a semana seguinte.</p>
+    <p class="lead aceite__lead">Escolha o pacote, aceite a proposta e marcamos o kickoff para a semana seguinte.</p>
     <div class="aceite__ctas">
-      <a class="btn btn--choc" href={`mailto:${p.email}?subject=${assunto}&body=${corpo}`}>Aceitar proposta</a>
+      <a class="btn btn--choc" href={`mailto:${p.email}?subject=${assunto}&body=${corpo}`}>
+        Aceitar proposta
+        <svg class="btn__icon btn__icon--right" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7h11M7.5 2l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" /></svg>
+      </a>
       <a class="btn" href={`mailto:${p.email}?subject=${encodeURIComponent("Conversa sobre a proposta Baits")}`}>Agendar conversa</a>
     </div>
-    <figure class="visual aceite__visual tone-pink" aria-hidden="true">
-      <img src={`${base}/img/braian-aceite.webp`} alt="" loading="lazy" onerror="this.remove()" />
+    <figure class:list={["visual aceite__visual tone-pink", { "visual--empty": !hasImg }]} aria-hidden="true">
+      {hasImg
+        ? <img src={`${base}/${img}`} alt="" loading="lazy" decoding="async" width="1200" height="1200" />
+        : <span class="label visual__tag">Fig. 02 — Braian acenando</span>}
     </figure>
   </div>
 </section>
 
 <style>
   .aceite { overflow: hidden; }
-  .aceite__grid { display: grid; gap: 28px; position: relative; }
-  .aceite__title { max-width: 8ch; position: relative; z-index: 2; }
-  .aceite__ctas { display: flex; gap: 12px; flex-wrap: wrap; position: relative; z-index: 2; }
+  .aceite__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(240px, 30vw, 480px);
+    grid-template-areas:
+      "eyebrow visual"
+      "title   visual"
+      "lead    visual"
+      "ctas    visual";
+    column-gap: clamp(24px, 4vw, 72px);
+    row-gap: clamp(20px, 2.4vw, 32px);
+    align-items: end;
+  }
+  .aceite__eyebrow { grid-area: eyebrow; }
+  .aceite__title { grid-area: title; max-width: 8ch; }
+  .aceite__lead { grid-area: lead; }
+  .aceite__ctas { grid-area: ctas; display: flex; gap: 12px; flex-wrap: wrap; }
+  .aceite__visual { grid-area: visual; aspect-ratio: 1; align-self: end; border: 2px solid var(--baits-chocolate); }
   .btn--choc { background: var(--baits-chocolate); color: var(--baits-yellow); border-color: var(--baits-chocolate); }
-  .btn--choc:hover { background: var(--baits-coral); border-color: var(--baits-coral); color: var(--baits-chocolate); }
-  .aceite__visual { position: absolute; right: 0; bottom: -40px; width: min(36vw, 520px); aspect-ratio: 1; z-index: 1; }
-  @media (max-width: 900px) { .aceite__visual { position: relative; bottom: 0; width: 100%; aspect-ratio: 4/3; } }
+  .btn--choc:hover { background: var(--baits-coral); border-color: var(--baits-coral); color: var(--ink-deep); }
+  @media (max-width: 900px) {
+    .aceite__grid {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: "eyebrow" "title" "lead" "ctas" "visual";
+    }
+    .aceite__visual { aspect-ratio: 4 / 3; margin-top: 16px; }
+  }
+  @media (max-width: 480px) {
+    .aceite__ctas .btn { width: 100%; }
+  }
 </style>

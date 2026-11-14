@@ -1,0 +1,45 @@
+---
+import p from "../data/proposta.json";
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+<section id="topo" class="hero tone-choc corners">
+  <div class="wrap hero__grid">
+    <p class="label hero__eyebrow" data-fade>Proposta comercial · Nutrição cognitiva</p>
+    <h1 class="display hero__title" data-fade>
+      Se o músculo tem nutrição, <em>por que a mente não?</em>
+    </h1>
+    <div class="hero__foot">
+      <dl class="hero__meta label">
+        <div><dt>Cliente</dt><dd>{p.cliente}</dd></div>
+        <div><dt>Proponente</dt><dd>{p.proponente}</dd></div>
+        <div><dt>Data</dt><dd>{p.data}</dd></div>
+        <div><dt>Válida até</dt><dd>{p.validade}</dd></div>
+      </dl>
+      <div class="hero__ctas">
+        <a class="btn btn--solid" href="#investimento">Ver investimento</a>
+        <a class="btn" href={`${base}/${p.pdf}`} download>Baixar PDF</a>
+      </div>
+    </div>
+    <figure class="visual hero__visual tone-pink" aria-hidden="true">
+      <img src={`${base}/img/hero-braian.webp`} alt="" loading="eager" onerror="this.remove()" />
+    </figure>
+  </div>
+</section>
+
+<style>
+  .hero { min-height: 100svh; display: flex; align-items: end; padding-block: 140px 56px; overflow: hidden; }
+  .hero__grid { display: grid; gap: 40px; width: 100%; position: relative; }
+  .hero__eyebrow { color: var(--baits-yellow); }
+  .hero__title { max-width: 12ch; color: var(--baits-pink); position: relative; z-index: 2; }
+  .hero__title em { font-style: normal; color: var(--baits-pink-50); }
+  .hero__foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 32px; position: relative; z-index: 2; }
+  .hero__meta { display: grid; grid-template-columns: repeat(4, auto); gap: 8px 40px; margin: 0; }
+  .hero__meta dt { opacity: 0.6; }
+  .hero__meta dd { margin: 4px 0 0; color: var(--baits-pink-50); }
+  .hero__ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+  .hero__visual { position: absolute; right: 0; top: -40px; width: min(42vw, 620px); aspect-ratio: 1; opacity: 0.95; z-index: 1; }
+  @media (max-width: 900px) {
+    .hero__visual { position: relative; top: 0; width: 100%; aspect-ratio: 4/3; order: -1; }
+    .hero__meta { grid-template-columns: repeat(2, auto); }
+  }
+</style>

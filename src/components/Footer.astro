@@ -1,0 +1,17 @@
+---
+import p from "../data/proposta.json";
+---
+<footer class="footer tone-choc">
+  <div class="wrap footer__row label">
+    <span>Proposta para {p.cliente} · por {p.proponente}</span>
+    <span>Válida até {p.validade}</span>
+    <span>Identidade Baits © Estudio Kimura · IA LAB 6</span>
+  </div>
+  <p class="footer__mark" aria-hidden="true">Baits</p>
+</footer>
+
+<style>
+  .footer { overflow: hidden; padding-top: 48px; }
+  .footer__row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; opacity: 0.8; }
+  .footer__mark { font-family: var(--font-display); font-weight: 800; font-size: 34vw; line-height: 0.75; letter-spacing: -0.05em; color: var(--baits-pink); margin: 40px 0 -6vw; text-align: center; }
+</style>

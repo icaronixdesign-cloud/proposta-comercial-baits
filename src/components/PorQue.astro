@@ -1,0 +1,32 @@
+---
+import p from "../data/proposta.json";
+---
+<section class="section porque tone-violet corners">
+  <div class="wrap porque__grid">
+    <div>
+      <p class="label">Por que nós</p>
+      <h2 class="h2 porque__title" data-fade>Pensar dá trabalho. A gente gosta.</h2>
+      <p class="porque__who"><strong>{p.proponente}</strong><br />{p.papel}</p>
+    </div>
+    <ol class="porque__list">
+      {p.principios.map((x, i) => (
+        <li data-card>
+          <span class="label">{String(i + 1).padStart(2, "0")}</span>
+          <h3>{x.titulo}</h3>
+          <p>{x.texto}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .porque__grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px; }
+  .porque__title { margin: 20px 0 32px; max-width: 12ch; font-size: clamp(2.5rem, 5.5vw, 5.5rem); }
+  .porque__who { font-size: 1.125rem; }
+  .porque__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+  .porque__list li { display: grid; grid-template-columns: 56px 1fr; gap: 4px 16px; padding: 24px 0; border-top: 2px solid var(--baits-chocolate); }
+  .porque__list h3 { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.75rem, 3vw, 2.75rem); line-height: 1; }
+  .porque__list p { grid-column: 2; }
+  @media (max-width: 900px) { .porque__grid { grid-template-columns: 1fr; } }
+</style>

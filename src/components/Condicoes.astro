@@ -1,0 +1,33 @@
+---
+import p from "../data/proposta.json";
+---
+<section id="condicoes" class="section condicoes tone-choc corners">
+  <div class="wrap condicoes__grid">
+    <div>
+      <p class="label condicoes__eyebrow">Condições</p>
+      <h2 class="h2 condicoes__title" data-fade>O combinado, sem letra miúda.</h2>
+    </div>
+    <div class="condicoes__list">
+      {p.condicoes.map((c, i) => (
+        <details open={i === 0}>
+          <summary><span class="label">{String(i + 1).padStart(2, "0")}</span>{c.titulo}</summary>
+          <p>{c.texto}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .condicoes__grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 64px; }
+  .condicoes__eyebrow { color: var(--baits-yellow); }
+  .condicoes__title { margin-top: 20px; color: var(--baits-pink); max-width: 12ch; }
+  details { border-top: 1.5px solid color-mix(in srgb, var(--baits-pink) 40%, transparent); padding: 22px 0; }
+  details:last-child { border-bottom: 1.5px solid color-mix(in srgb, var(--baits-pink) 40%, transparent); }
+  summary { cursor: pointer; list-style: none; display: flex; gap: 20px; align-items: baseline; font-family: var(--font-display); font-weight: 800; font-size: clamp(1.5rem, 2.6vw, 2.25rem); color: var(--baits-pink); }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; margin-left: auto; font-family: var(--font-label); }
+  details[open] summary::after { content: "−"; }
+  details p { margin-top: 14px; max-width: 60ch; opacity: 0.9; padding-left: 52px; }
+  @media (max-width: 900px) { .condicoes__grid { grid-template-columns: 1fr; } details p { padding-left: 0; } }
+</style>

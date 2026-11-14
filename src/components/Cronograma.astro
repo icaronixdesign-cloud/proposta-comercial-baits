@@ -1,0 +1,46 @@
+---
+import p from "../data/proposta.json";
+const total = 16;
+const weeks = Array.from({ length: total }, (_, i) => i + 1);
+---
+<section class="section h-section cronograma tone-choc corners" data-horizontal>
+  <div class="wrap h-head">
+    <div>
+      <p class="label cronograma__eyebrow">Cronograma</p>
+      <h2 class="h2" data-fade>12 semanas no Flow. 16 com o Digital.</h2>
+    </div>
+  </div>
+  <div class="h-track" data-track>
+    <div class="gantt" role="img" aria-label="Cronograma: Descobrir semanas 1 a 3, Definir 4 a 5, Desenvolver 6 a 9, Entregar 10 a 12; app de foco 9 a 14 e site no ar até a semana 16 no pacote Flow + Digital.">
+      <div class="gantt__weeks" style={`--n:${total}`}>
+        {weeks.map((w) => <span class="label">S{w}</span>)}
+      </div>
+      {p.cronograma.map((r) => (
+        <div class="gantt__row" style={`--n:${total}`}>
+          <span class="gantt__name">{r.nome}</span>
+          <span class={`gantt__bar tone-${r.tom}`} style={`grid-column:${r.inicio} / ${r.fim + 1}`} data-bar>
+            {r.inicio}–{r.fim}
+          </span>
+        </div>
+      ))}
+      <div class="gantt__row gantt__row--marcos" style={`--n:${total}`}>
+        <span class="gantt__name">Aprovações</span>
+        {p.marcos.map((m) => (
+          <span class="gantt__marco label" style={`grid-column:${m.semana}`} data-bar>◆ {m.nome}</span>
+        ))}
+      </div>
+    </div>
+  </div>
+  <div class="progress" aria-hidden="true"><span data-progress></span></div>
+</section>
+
+<style>
+  .cronograma__eyebrow { color: var(--baits-yellow); margin-bottom: 20px; }
+  .cronograma .h2 { color: var(--baits-pink); max-width: 14ch; }
+  .gantt { width: max(1400px, 140vw); display: grid; gap: 14px; padding-left: 200px; position: relative; }
+  .gantt__weeks, .gantt__row { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 4px; position: relative; }
+  .gantt__weeks span { opacity: 0.6; border-left: 1px solid color-mix(in srgb, var(--baits-pink) 25%, transparent); padding-left: 8px; }
+  .gantt__name { position: absolute; left: -200px; width: 190px; top: 50%; transform: translateY(-50%); font-weight: 600; }
+  .gantt__bar { border-radius: 999px; padding: 14px 20px; font-family: var(--font-label); font-size: 0.85rem; font-weight: 500; }
+  .gantt__marco { color: var(--baits-yellow); padding: 12px 0; white-space: nowrap; }
+</style>

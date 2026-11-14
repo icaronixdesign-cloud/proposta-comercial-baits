@@ -1,0 +1,29 @@
+---
+import p from "../data/proposta.json";
+---
+<section class="section desafio tone-choc corners">
+  <div class="wrap">
+    <p class="label desafio__eyebrow">O desafio</p>
+    <h2 class="h2 desafio__title" data-fade>Fazer existir uma categoria que ainda não existe.</h2>
+    <ol class="desafio__grid">
+      {p.desafio.map((d) => (
+        <li class="desafio__card" data-card>
+          <span class="label">{d.n}</span>
+          <h3>{d.titulo}</h3>
+          <p>{d.texto}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .desafio__eyebrow { color: var(--baits-yellow); }
+  .desafio__title { margin-top: 24px; max-width: 18ch; color: var(--baits-pink); }
+  .desafio__grid { list-style: none; margin: 72px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); }
+  .desafio__card { border-top: 2px solid var(--baits-pink); padding-top: 20px; display: grid; gap: 12px; align-content: start; }
+  .desafio__card h3 { font-family: var(--font-display); font-weight: 800; font-size: 1.75rem; line-height: 1; color: var(--baits-pink); }
+  .desafio__card p { opacity: 0.85; }
+  @media (max-width: 900px) { .desafio__grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .desafio__grid { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,31 @@
+---
+import p from "../data/proposta.json";
+const assunto = encodeURIComponent("Aceite da proposta Baits");
+const corpo = encodeURIComponent("Olá! Aceito a proposta Baits no pacote: ");
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+<section id="aceite" class="section aceite tone-yellow corners">
+  <div class="wrap aceite__grid">
+    <p class="label">Próximo passo</p>
+    <h2 class="display aceite__title" data-fade>Topa um desafio?</h2>
+    <p class="lead">Escolha o pacote, aceite a proposta e marcamos o kickoff para a semana seguinte.</p>
+    <div class="aceite__ctas">
+      <a class="btn btn--choc" href={`mailto:${p.email}?subject=${assunto}&body=${corpo}`}>Aceitar proposta</a>
+      <a class="btn" href={`mailto:${p.email}?subject=${encodeURIComponent("Conversa sobre a proposta Baits")}`}>Agendar conversa</a>
+    </div>
+    <figure class="visual aceite__visual tone-pink" aria-hidden="true">
+      <img src={`${base}/img/braian-aceite.webp`} alt="" loading="lazy" onerror="this.remove()" />
+    </figure>
+  </div>
+</section>
+
+<style>
+  .aceite { overflow: hidden; }
+  .aceite__grid { display: grid; gap: 28px; position: relative; }
+  .aceite__title { max-width: 8ch; position: relative; z-index: 2; }
+  .aceite__ctas { display: flex; gap: 12px; flex-wrap: wrap; position: relative; z-index: 2; }
+  .btn--choc { background: var(--baits-chocolate); color: var(--baits-yellow); border-color: var(--baits-chocolate); }
+  .btn--choc:hover { background: var(--baits-coral); border-color: var(--baits-coral); color: var(--baits-chocolate); }
+  .aceite__visual { position: absolute; right: 0; bottom: -40px; width: min(36vw, 520px); aspect-ratio: 1; z-index: 1; }
+  @media (max-width: 900px) { .aceite__visual { position: relative; bottom: 0; width: 100%; aspect-ratio: 4/3; } }
+</style>

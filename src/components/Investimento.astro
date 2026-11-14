@@ -1,0 +1,49 @@
+---
+import p from "../data/proposta.json";
+const brl = (n: number) => n.toLocaleString("pt-BR");
+---
+<section id="investimento" class="section investimento tone-pink50 corners">
+  <div class="wrap">
+    <p class="label">Investimento</p>
+    <h2 class="h2 investimento__title" data-fade>Três formas de começar. Uma recomendada.</h2>
+    <div class="investimento__grid">
+      {p.pacotes.map((k) => (
+        <article class={`pack tone-${k.tom} ${k.destaque ? "pack--destaque" : ""}`} data-card>
+          <header>
+            <span class="label">{k.rotulo}</span>
+            <h3 class="pack__name">{k.nome}</h3>
+          </header>
+          <p class="pack__price">
+            <span class="pack__cur">R$</span>
+            <span data-count={k.valor} data-vista={Math.round(k.valor * 0.95)}>{brl(k.valor)}</span>
+          </p>
+          <p class="label">{k.semanas} semanas · {k.horas} horas</p>
+          <ul>{k.itens.map((i) => <li>{i}</li>)}</ul>
+        </article>
+      ))}
+    </div>
+    <div class="investimento__foot">
+      <label class="toggle label">
+        <input type="checkbox" data-vista-toggle />
+        <span>Pagamento à vista na assinatura (−5%)</span>
+      </label>
+      <p class="label">Taxa-hora R$ 180 · impostos inclusos · válida até {p.validade}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .investimento__title { margin-top: 20px; max-width: 16ch; }
+  .investimento__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gutter); margin-top: 64px; align-items: stretch; }
+  .pack { border-radius: var(--radius); padding: 32px; display: grid; gap: 20px; align-content: start; border: 2px solid var(--baits-chocolate); }
+  .pack--destaque { transform: translateY(-16px); box-shadow: 0 0 0 4px var(--baits-chocolate); }
+  .pack__name { font-family: var(--font-display); font-weight: 800; font-size: clamp(2.5rem, 4vw, 3.5rem); line-height: 1; margin-top: 8px; }
+  .pack__price { font-family: var(--font-display); font-weight: 800; font-size: clamp(2.5rem, 4.6vw, 4.5rem); line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .pack__cur { font-size: 0.4em; vertical-align: top; margin-right: 6px; }
+  .pack ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .pack li { border-top: 1.5px solid currentColor; padding-top: 8px; }
+  .investimento__foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; margin-top: 48px; }
+  .toggle { display: inline-flex; align-items: center; gap: 12px; cursor: pointer; }
+  .toggle input { width: 22px; height: 22px; accent-color: var(--baits-chocolate); }
+  @media (max-width: 900px) { .investimento__grid { grid-template-columns: 1fr; } .pack--destaque { transform: none; } }
+</style>

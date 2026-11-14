@@ -1,0 +1,12 @@
+---
+import Base from "../layouts/Base.astro";
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+<Base title="Baits — Página não encontrada" description="Essa ideia se perdeu.">
+  <main class="tone-pink" style="min-height:100svh;display:grid;place-content:center;gap:28px;text-align:center;padding:24px">
+    <p class="label">Erro 404</p>
+    <h1 class="display">Perdeu o foco?</h1>
+    <p class="lead" style="margin-inline:auto">Essa página não existe. A proposta continua lá.</p>
+    <p><a class="btn" href={`${base}/`}>Voltar para a proposta</a></p>
+  </main>
+</Base>

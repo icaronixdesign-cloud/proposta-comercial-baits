@@ -1,0 +1,179 @@
+/* Tokens — paleta amostrada do case Baits (confirmar com os arquivos da marca) */
+:root {
+  --baits-chocolate: #521717;
+  --baits-chocolate-90: #3d1010;
+  --baits-pink: #fca8db;
+  --baits-violet: #817aec;
+  --baits-yellow: #fbc65a;
+  --baits-coral: #ed5b5d;
+  --baits-pink-50: #ffe3f4;
+  --baits-lavender: #c4c2fa;
+  --baits-sky: #84cbea;
+  --baits-cream: #ebddc1;
+
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-title: "Archivo", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-label: "JetBrains Mono", ui-monospace, monospace;
+
+  --fs-display: clamp(4.5rem, 14vw, 13rem);
+  --fs-h1: clamp(3rem, 7vw, 7rem);
+  --fs-h2: clamp(2rem, 4.5vw, 4.5rem);
+  --fs-body: 1.125rem;
+  --fs-label: 0.75rem;
+
+  --margin: clamp(20px, 4vw, 64px);
+  --gutter: 24px;
+  --radius: 24px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+body {
+  margin: 0;
+  background: var(--baits-chocolate);
+  color: var(--baits-pink-50);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+h1, h2, h3, p { margin: 0; }
+
+:focus-visible {
+  outline: 3px solid var(--baits-yellow);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.skip {
+  position: absolute; left: -999px; top: 8px;
+  background: var(--baits-yellow); color: var(--baits-chocolate);
+  padding: 8px 14px; border-radius: 999px; z-index: 100;
+}
+.skip:focus { left: 8px; }
+
+/* Tipografia */
+.display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-display);
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+}
+.h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-h1);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+}
+.h2 {
+  font-family: var(--font-title);
+  font-weight: 800;
+  font-stretch: 80%;
+  font-size: var(--fs-h2);
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+.label {
+  font-family: var(--font-label);
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.lead { font-size: clamp(1.125rem, 1.6vw, 1.5rem); max-width: 38ch; }
+
+/* Layout */
+.wrap { padding-inline: var(--margin); max-width: 1680px; margin-inline: auto; }
+.section {
+  position: relative;
+  padding-block: clamp(96px, 14vw, 200px);
+}
+/* Marcas de canto "+" */
+.corners::before,
+.corners::after {
+  content: "+";
+  position: absolute; top: 16px;
+  font-family: var(--font-label); font-size: 18px; line-height: 1;
+  opacity: 0.5;
+}
+.corners::before { left: var(--margin); }
+.corners::after { right: var(--margin); }
+
+.tone-violet { background: var(--baits-violet); color: var(--baits-chocolate); }
+.tone-pink { background: var(--baits-pink); color: var(--baits-chocolate); }
+.tone-yellow { background: var(--baits-yellow); color: var(--baits-chocolate); }
+.tone-coral { background: var(--baits-coral); color: var(--baits-chocolate); }
+.tone-lavender { background: var(--baits-lavender); color: var(--baits-chocolate); }
+.tone-sky { background: var(--baits-sky); color: var(--baits-chocolate); }
+.tone-cream { background: var(--baits-cream); color: var(--baits-chocolate); }
+.tone-pink50 { background: var(--baits-pink-50); color: var(--baits-chocolate); }
+.tone-choc { background: var(--baits-chocolate); color: var(--baits-pink-50); }
+
+/* Botões */
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 16px 28px;
+  border-radius: 999px;
+  font-family: var(--font-title); font-weight: 700; font-size: 1rem;
+  text-decoration: none;
+  border: 2px solid currentColor;
+  transition: transform 0.4s var(--ease-out), background 0.3s, color 0.3s;
+}
+.btn:hover { transform: translateY(-3px); }
+.btn--solid { background: var(--baits-yellow); color: var(--baits-chocolate); border-color: var(--baits-yellow); }
+.btn--solid:hover { background: var(--baits-pink); border-color: var(--baits-pink); }
+
+/* Visual com imagem opcional: se o arquivo não existir, fica o painel de cor */
+.visual {
+  position: relative; overflow: hidden;
+  border-radius: var(--radius);
+  aspect-ratio: 4 / 3;
+  margin: 0;
+  display: grid; place-items: end start;
+}
+.visual img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.visual__tag { position: relative; margin: 16px; }
+
+/* Trilhos horizontais: carrossel nativo por padrão; o JS fixa e anima no desktop */
+.h-section { overflow: hidden; }
+.h-head { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 40px; }
+.h-track {
+  display: flex; gap: var(--gutter);
+  padding-inline: var(--margin);
+  overflow-x: auto; scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.h-track::-webkit-scrollbar { display: none; }
+.h-track > * { scroll-snap-align: start; flex: 0 0 auto; }
+.h-section.is-pinned .h-track { overflow: visible; width: max-content; }
+.progress { height: 3px; background: currentColor; opacity: 0.2; margin: 32px var(--margin) 0; position: relative; }
+.progress span { position: absolute; inset: 0; background: currentColor; opacity: 1; transform-origin: left; transform: scaleX(0); }
+
+/* Preloader (some sozinho mesmo sem JS) */
+.preloader {
+  position: fixed; inset: 0; z-index: 90;
+  display: grid; place-items: center;
+  background: var(--baits-chocolate); color: var(--baits-pink);
+  animation: preOut 0.5s var(--ease-out) 1.2s forwards;
+}
+.preloader span { display: inline-block; animation: preIn 0.6s var(--ease-out) both; }
+@keyframes preIn { from { opacity: 0; transform: translateY(40%); } }
+@keyframes preOut { to { opacity: 0; visibility: hidden; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-delay: 0ms !important; transition-duration: 0.01ms !important; }
+}

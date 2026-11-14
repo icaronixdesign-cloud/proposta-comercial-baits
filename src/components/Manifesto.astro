@@ -1,0 +1,18 @@
+---
+import p from "../data/proposta.json";
+---
+<section id="conteudo" class="section manifesto tone-pink50 corners">
+  <div class="wrap">
+    <p class="label">Sinal 01 · Exaustão cognitiva</p>
+    <p class="manifesto__text h1" data-words>{p.manifesto}</p>
+    <div class="manifesto__chips label">
+      <span>Quem programa</span><span>Quem cria</span><span>Quem resolve problemas</span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .manifesto__text { margin-top: 40px; font-size: clamp(2rem, 5.2vw, 5.4rem); line-height: 1.02; max-width: 22ch; }
+  .manifesto__chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 56px; }
+  .manifesto__chips span { border: 1.5px solid currentColor; border-radius: 999px; padding: 8px 16px; }
+</style>

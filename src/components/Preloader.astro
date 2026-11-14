@@ -1,0 +1,8 @@
+---
+const words = ["Mastiga", "essa", "ideia"];
+---
+<div class="preloader" aria-hidden="true">
+  <p class="h1">
+    {words.map((w, i) => <span style={`animation-delay:${i * 0.12}s`}>{w}&nbsp;</span>)}
+  </p>
+</div>

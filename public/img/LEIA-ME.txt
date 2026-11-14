@@ -1,0 +1,13 @@
+Coloque aqui as imagens do case Baits (arquivos do Estudio Kimura), em WebP, com estes nomes.
+Enquanto um arquivo nao existir, o site mostra um painel na cor da linha.
+
+hero-braian.webp     Braian em 3D (hero)              ~1200x1200
+braian-aceite.webp   Braian acenando (secao Aceite)   ~1200x1200
+plataforma.webp      Entregavel: plataforma de marca  ~1200x900
+identidade.webp      Entregavel: identidade visual    ~1200x900
+braian.webp          Entregavel: Braian 2D/3D         ~1200x900
+embalagens.webp      Entregavel: barras e cereais     ~1200x900
+campanha.webp        Entregavel: kit de lancamento    ~1200x900
+site.webp            Entregavel: UI do site           ~1200x900
+
+Na pasta public/: proposta-baits.pdf (versao assinavel) e og-baits.png (1200x630).

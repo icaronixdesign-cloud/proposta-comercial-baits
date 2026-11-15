@@ -45,12 +45,12 @@
   ],
 
   "entregaveis": [
-    { "titulo": "Plataforma de marca", "texto": "Propósito, posicionamento, promessa e voz.", "img": "img/plataforma.webp", "braian": "img/braian/plataforma.webp", "tom": "violet" },
-    { "titulo": "Identidade visual", "texto": "Wordmark, paleta, tipografia e grafismos.", "img": "img/identidade.webp", "braian": "img/braian/identidade.webp", "tom": "coral" },
-    { "titulo": "Braian", "texto": "O cérebro inquieto em 2D e 3D, com 6 expressões.", "img": "img/braian.webp", "braian": "img/braian/braian.webp", "tom": "yellow" },
-    { "titulo": "Embalagens", "texto": "3 barras e 3 cereais, prontos para a gráfica.", "img": "img/embalagens.webp", "braian": "img/braian/embalagens.webp", "tom": "lavender" },
-    { "titulo": "Kit de lançamento", "texto": "3 peças OOH, 12 posts e 3 motions.", "img": "img/campanha.webp", "braian": "img/braian/campanha.webp", "tom": "sky" },
-    { "titulo": "Site", "texto": "UI desktop e mobile com design system no Figma.", "img": "img/site.webp", "braian": "img/braian/site.webp", "tom": "cream" }
+    { "titulo": "Plataforma de marca", "texto": "Propósito, posicionamento, promessa e voz.", "img": "img/plataforma.webp", "tom": "violet" },
+    { "titulo": "Identidade visual", "texto": "Wordmark, paleta, tipografia e grafismos.", "img": "img/identidade.webp", "tom": "coral" },
+    { "titulo": "Braian", "texto": "O cérebro inquieto em 2D e 3D, com 6 expressões.", "img": "img/braian.webp", "tom": "yellow" },
+    { "titulo": "Embalagens", "texto": "3 barras e 3 cereais, prontos para a gráfica.", "img": "img/embalagens.webp", "tom": "lavender" },
+    { "titulo": "Kit de lançamento", "texto": "3 peças OOH, 12 posts e 3 motions.", "img": "img/campanha.webp", "tom": "sky" },
+    { "titulo": "Site", "texto": "UI desktop e mobile com design system no Figma.", "img": "img/site.webp", "tom": "cream" }
   ],
 
   "cronograma": [

@@ -64,11 +64,9 @@ if (!reduce) {
   const foot = $("[data-hero-in]");
   const tl = gsap.timeline({ delay: PRELOADER_OUT });
   const disc = $("[data-hero-disc]");
-  const char = $("[data-hero-char]");
-  if (disc && char) {
-    // Braian 3D: o disco abre e o personagem sobe para dentro dele
+  if (disc) {
+    // O disco abre a partir do centro
     tl.from(disc, { scale: 0.2, opacity: 0, duration: 1.4, ease: "expo.out" }, 0);
-    tl.from(char, { yPercent: 28, opacity: 0, duration: 1.5, ease: "expo.out" }, 0.15);
   } else if (visual) {
     const r = getComputedStyle(visual).borderRadius || "24px";
     tl.fromTo(
@@ -198,26 +196,6 @@ function initRails() {
           }
         });
       });
-
-      // Braian dos Entregáveis: parallax leve contra o movimento do trilho
-      if (pin) {
-        sections.forEach((section) => {
-          const track = $("[data-track]", section);
-          const move = track && gsap.getTweensOf(track)[0];
-          if (!move) return;
-          $$("[data-braian]", track).forEach((el) => {
-            gsap.fromTo(
-              el,
-              { xPercent: 10 },
-              {
-                xPercent: -10,
-                ease: "none",
-                scrollTrigger: { trigger: el.closest(".card"), containerAnimation: move, start: "left right", end: "right left", scrub: true },
-              }
-            );
-          });
-        });
-      }
 
       // Quando os pins são recriados (resize), reordena para recalcular de cima para baixo
       ScrollTrigger.sort();

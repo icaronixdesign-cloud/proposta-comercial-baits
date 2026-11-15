@@ -1,13 +1,6 @@
 ---
 import p from "../data/proposta.json";
-import { hasPublic } from "../lib/assets";
 const aceite = `https://wa.me/${p.whatsapp}?text=${encodeURIComponent(`Olá, eu aceito a proposta da ${p.cliente}.`)}`;
-const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-const img = "img/braian-aceite.webp";
-const hasImg = hasPublic(img);
-// Sem a foto do case, entra o Braian fisgado no anzol (a isca da Baits)
-const charImg = "img/braian/aceite.webp";
-const hasChar = hasPublic(charImg);
 const semanas = p.plano.semanas;
 const dias = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 ---
@@ -23,18 +16,7 @@ const dias = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
       </a>
       <button type="button" class="btn" data-agenda-open aria-haspopup="dialog">Agendar conversa</button>
     </div>
-    <figure class:list={["visual aceite__visual tone-violet", { "visual--empty": !hasImg }]} aria-hidden="true">
-      {hasImg
-        ? <img src={`${base}/${img}`} alt="" loading="lazy" decoding="async" width="1200" height="1200" />
-        : <>
-            {hasChar && (
-              <span class="aceite__char">
-                <img src={`${base}/${charImg}`} alt="" loading="lazy" decoding="async" />
-              </span>
-            )}
-            <span class="label visual__tag aceite__tag">Fig. 02 — Braian fisgado</span>
-          </>}
-    </figure>
+    <figure class="visual visual--empty aceite__visual tone-violet" aria-hidden="true"></figure>
   </div>
 
   <dialog class="agenda" aria-labelledby="agenda-title" data-agenda data-whatsapp={p.whatsapp} data-cliente={p.cliente} data-semanas={semanas}>
@@ -248,25 +230,6 @@ const dias = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
     content: ""; position: absolute; inset: 0; z-index: -1;
     background: radial-gradient(55% 50% at 50% 55%, color-mix(in srgb, var(--baits-pink-50) 70%, transparent), transparent 72%);
   }
-  .aceite__char {
-    position: absolute; inset: 0 14% 15% 14%;
-    display: flex; align-items: flex-end; justify-content: center;
-  }
-  .aceite__char::after {
-    content: ""; position: absolute; z-index: -1; left: 50%; bottom: -2%; width: 50%; height: 6%;
-    translate: -50% 0; border-radius: 50%;
-    background: radial-gradient(closest-side, color-mix(in srgb, var(--baits-chocolate) 28%, transparent), transparent);
-  }
-  .aceite__char img {
-    position: static; width: 100%; height: 100%; object-fit: contain; object-position: 50% 100%;
-    filter: drop-shadow(0 14px 18px color-mix(in srgb, var(--baits-chocolate) 22%, transparent));
-    /* balança preso ao anzol */
-    transform-origin: 50% 0;
-    animation: fisgado 3.6s ease-in-out infinite alternate;
-  }
-  .aceite__tag { position: absolute; left: 0; bottom: 0; }
-  @keyframes fisgado { from { rotate: -2.5deg; translate: 0 0; } to { rotate: 2.5deg; translate: 0 -8px; } }
-  @media (prefers-reduced-motion: reduce) { .aceite__char img { animation: none; } }
   .btn--choc { background: var(--baits-chocolate); color: var(--baits-yellow); border-color: var(--baits-chocolate); }
   .btn--choc:hover { background: var(--baits-coral); border-color: var(--baits-coral); color: var(--ink-deep); }
   @media (max-width: 900px) {
@@ -275,7 +238,6 @@ const dias = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
       grid-template-areas: "eyebrow" "title" "lead" "ctas" "visual";
     }
     .aceite__visual { aspect-ratio: 4 / 3; margin-top: 16px; }
-    .aceite__char { bottom: 20%; }
   }
   @media (max-width: 480px) {
     .aceite__ctas .btn { width: 100%; }

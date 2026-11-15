@@ -4,6 +4,7 @@
 - No ar na Vercel: https://proposta-comercial-baits.vercel.app/ (publica sozinho a cada push na `main`).
 - `astro.config.mjs` usa base `/` quando `VERCEL` está definido e `/proposta-comercial-baits` no GitHub Pages.
 - Feito: refino visual, animações (pins, fade, contadores), plano único Flow + Digital com à vista −5%, aceite e agenda via WhatsApp, contraste AA, reduced motion, teclado.
+- O personagem Braian saiu do site (briefing: vender a proposta como se a marca ainda não existisse). A paleta e a retícula ficam.
 - O workflow do GitHub Pages falha em `configure-pages` porque o Pages não está ativado (não afeta a Vercel).
 
 ## Pendências

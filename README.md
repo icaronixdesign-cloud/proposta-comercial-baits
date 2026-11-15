@@ -32,6 +32,9 @@ sem o arquivo, a seção mostra o painel de cor com retícula e o botão "Baixar
 Basta soltar o arquivo com o nome certo e publicar de novo.
 
 ## Movimento e acessibilidade
+- No final da proposta, `Personagem.astro` carrega o avatar 3D ao se aproximar da tela. Arraste para girar, use dois dedos ou o botão central do mouse para zoom; no teclado, use setas, `+`/`−` e `Home`.
+- Botões de joinha e pulo reproduzem os clipes do GLB e voltam ao repouso. Recomeçar restaura a câmera. Com movimento reduzido, o avatar só anima por ação do visitante; fora da tela ou com a aba oculta, a renderização pausa.
+- Os modelos ficam em `public/models/boneco/`: `boneco.glb` para desktop e `boneco-mobile.glb` para celular. O decoder Meshopt acompanha o bundle; não há dependência de CDN. Sem WebGL ou em caso de falha, aparece o retrato do autor.
 - Trilhos de Método, Entregáveis e Cronograma ficam fixados só com tela ≥ 768 × 560 px e sem `prefers-reduced-motion`;
   nos demais casos viram carrossel nativo, focável e rolável pelas setas do teclado.
 - Com `prefers-reduced-motion: reduce`: sem Lenis, sem preloader, sem pin, sem blur; preços aparecem no valor final.

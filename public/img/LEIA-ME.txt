@@ -11,3 +11,6 @@ campanha.webp        Entregavel: kit de lancamento    ~1200x900
 site.webp            Entregavel: UI do site           ~1200x900
 
 Na pasta public/: proposta-baits.pdf (versao assinavel) e og-baits.png (1200x630).
+
+img/braian/          Braian por entregavel (tratado a partir de braian-baits-pngs/).
+                     Aparece no card enquanto a foto do case com o mesmo tema nao existir.

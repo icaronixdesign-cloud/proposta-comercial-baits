@@ -18,15 +18,26 @@ const total = String(p.entregaveis.length).padStart(2, "0");
   </div>
   <div class="h-track" data-track tabindex="0" role="region" aria-label="Entregáveis, rolagem horizontal">
     {p.entregaveis.map((e, i) => {
-      const has = hasPublic(e.img);
+      const n = String(i + 1).padStart(2, "0");
+      // Foto do case tem prioridade; sem ela, entra o Braian da etapa
+      const foto = hasPublic(e.img);
+      const braian = !foto && e.braian && hasPublic(e.braian);
       return (
-        <article class="card">
-          <figure class:list={["visual", `tone-${e.tom}`, { "visual--empty": !has }]}>
-            {has && <img src={`${base}/${e.img}`} alt="" loading="lazy" decoding="async" width="1200" height="900" />}
-            <span class="label visual__tag" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+        <article class="card" style={`--i:${i}`}>
+          <figure class:list={["visual stage", `tone-${e.tom}`, { "visual--empty": !foto }]}>
+            {foto && <img src={`${base}/${e.img}`} alt="" loading="lazy" decoding="async" width="1200" height="900" />}
+            {!foto && <span class="stage__n" aria-hidden="true">{n}</span>}
+            {braian && (
+              <span class="stage__char" data-braian>
+                <img src={`${base}/${e.braian}`} alt="" loading="lazy" decoding="async" />
+              </span>
+            )}
+            <span class="label stage__tag" aria-hidden="true">{n} / {total}</span>
           </figure>
-          <h3 data-panel-title>{e.titulo}</h3>
-          <p>{e.texto}</p>
+          <div class="card__text">
+            <h3 data-panel-title>{e.titulo}</h3>
+            <p>{e.texto}</p>
+          </div>
         </article>
       );
     })}
@@ -35,10 +46,66 @@ const total = String(p.entregaveis.length).padStart(2, "0");
 </section>
 
 <style>
-  .card { width: min(78vw, 460px); display: grid; grid-template-rows: auto auto 1fr; gap: 10px; }
-  .card .visual { border: 2px solid var(--baits-chocolate); margin-bottom: 8px; }
+  .card {
+    width: min(80vw, 440px);
+    display: grid; grid-template-rows: auto auto; gap: clamp(16px, 2.4vh, 24px);
+    align-content: start;
+  }
+  .card__text { display: grid; gap: 8px; padding-inline: 4px; }
   .card h3 { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.625rem, 2.2vw, 2rem); line-height: 1; letter-spacing: -0.02em; }
-  .card p { max-width: 34ch; }
-  .entregaveis.is-pinned .card { height: 100%; grid-template-rows: minmax(0, 1fr) auto auto; }
-  .entregaveis.is-pinned .card .visual { aspect-ratio: auto; min-height: 0; }
+  /* Duas linhas reservadas: todos os títulos ficam na mesma linha de base */
+  .card p { max-width: 32ch; min-height: calc(2 * 1.45em); line-height: 1.45; }
+
+  /* Palco do personagem */
+  .stage {
+    aspect-ratio: 4 / 5;
+    border: 2px solid var(--baits-chocolate);
+    place-items: stretch;
+    overflow: hidden;
+  }
+  .stage::before {
+    /* luz atrás do personagem */
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background: radial-gradient(60% 50% at 50% 58%, color-mix(in srgb, var(--baits-pink-50) 55%, transparent), transparent 70%);
+  }
+  .stage__n {
+    position: absolute; z-index: -1; left: 50%; top: 46%; translate: -50% -50%;
+    font-family: var(--font-display); font-weight: 800; font-size: clamp(9rem, 22vh, 15rem); line-height: 0.8; letter-spacing: -0.06em;
+    color: transparent; -webkit-text-stroke: 2px color-mix(in srgb, var(--baits-chocolate) 22%, transparent);
+    pointer-events: none; user-select: none;
+  }
+  .stage__char {
+    position: absolute; left: 10%; right: 10%; top: 12%; bottom: 9%;
+    display: flex; align-items: flex-end; justify-content: center;
+  }
+  .stage__char::after {
+    /* sombra no chão */
+    content: ""; position: absolute; z-index: -1; left: 50%; bottom: -2.5%; width: 62%; height: 6%;
+    translate: -50% 0; border-radius: 50%;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--baits-chocolate) 30%, transparent), transparent);
+  }
+  .stage__char img {
+    position: static; z-index: auto; width: 100%; height: 100%; object-fit: contain; object-position: 50% 100%;
+    filter: drop-shadow(0 14px 18px color-mix(in srgb, var(--baits-chocolate) 22%, transparent));
+    animation: bob 4.2s ease-in-out infinite alternate;
+    animation-delay: calc(var(--i) * -0.7s);
+    transform-origin: 50% 100%;
+    transition: scale 0.6s var(--ease-out);
+  }
+  .card:hover .stage__char img { scale: 1.04; }
+  @keyframes bob { from { translate: 0 0; } to { translate: 0 -10px; } }
+
+  .stage__tag {
+    position: absolute; top: clamp(14px, 1.4vw, 20px); left: clamp(14px, 1.4vw, 20px);
+    background: var(--baits-chocolate); color: var(--baits-pink-50);
+    padding: 5px 10px; border-radius: 999px; letter-spacing: 0.08em;
+  }
+
+  /* Fixado: o palco ocupa a altura que sobra, todos com a mesma altura e largura proporcional */
+  .entregaveis.is-pinned .card { height: 100%; grid-template-rows: minmax(0, 1fr) auto; width: auto; }
+  .entregaveis.is-pinned .stage { height: 100%; width: auto; aspect-ratio: 4 / 5; max-width: 80vw; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stage__char img { animation: none; }
+  }
 </style>

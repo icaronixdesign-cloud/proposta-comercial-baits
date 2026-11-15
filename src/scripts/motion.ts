@@ -193,6 +193,26 @@ function initRails() {
         });
       });
 
+      // Braian dos Entregáveis: parallax leve contra o movimento do trilho
+      if (pin) {
+        sections.forEach((section) => {
+          const track = $("[data-track]", section);
+          const move = track && gsap.getTweensOf(track)[0];
+          if (!move) return;
+          $$("[data-braian]", track).forEach((el) => {
+            gsap.fromTo(
+              el,
+              { xPercent: 10 },
+              {
+                xPercent: -10,
+                ease: "none",
+                scrollTrigger: { trigger: el.closest(".card"), containerAnimation: move, start: "left right", end: "right left", scrub: true },
+              }
+            );
+          });
+        });
+      }
+
       // Quando os pins são recriados (resize), reordena para recalcular de cima para baixo
       ScrollTrigger.sort();
       return () => cleanups.forEach((fn) => fn());

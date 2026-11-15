@@ -314,12 +314,13 @@ function initTypography() {
     const split = SplitText.create(el, { type: "words" });
     gsap.fromTo(
       split.words,
-      { opacity: 0.14 },
+      // Apagadas ainda legíveis; o texto termina de acender com o parágrafo inteiro na tela
+      { opacity: 0.22 },
       {
         opacity: 1,
         stagger: 0.1,
         ease: "none",
-        scrollTrigger: { trigger: el, start: "top 78%", end: "bottom 42%", scrub: 0.6 },
+        scrollTrigger: { trigger: el, start: "top 80%", end: "center 45%", scrub: 0.6 },
       }
     );
   });

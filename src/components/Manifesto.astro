@@ -1,10 +1,27 @@
 ---
 import p from "../data/proposta.json";
+
+// Ajustes de leitura sem mudar o texto: palavras de 1–2 letras presas à seguinte
+// (nada de "o" ou "a" sozinho no fim da linha), travessão nunca abrindo linha
+// e as duas últimas palavras juntas (sem "ela." sozinho na última linha).
+// Os grupos viram spans nowrap: o SplitText trata espaço não separável como espaço comum.
+const words = p.manifesto.split(" ");
+const groups: string[][] = [];
+words.forEach((w, i) => {
+  const prev = groups[groups.length - 1];
+  const glue =
+    prev &&
+    (/^\p{L}{1,2}$/u.test(words[i - 1]) || w === "—" || i === words.length - 1);
+  if (glue) prev.push(w);
+  else groups.push([w]);
+});
 ---
 <section id="conteudo" class="section manifesto tone-pink50 corners sheet">
-  <div class="wrap">
-    <p class="label eyebrow">Sinal 01 · Exaustão cognitiva</p>
-    <p class="manifesto__text h1" data-words>{p.manifesto}</p>
+  <div class="wrap manifesto__grid">
+    <p class="label eyebrow manifesto__eyebrow">Sinal 01 · Exaustão cognitiva</p>
+    <p class="manifesto__text h1" data-words>{groups.map((g, i) => (
+      <Fragment>{i > 0 && " "}{g.length > 1 ? <span class="nw">{g.join(" ")}</span> : g[0]}</Fragment>
+    ))}</p>
     <ul class="manifesto__chips label" aria-label="Para quem">
       <li>Quem programa</li><li>Quem cria</li><li>Quem resolve problemas</li>
     </ul>
@@ -12,7 +29,34 @@ import p from "../data/proposta.json";
 </section>
 
 <style>
-  .manifesto__text { margin-top: clamp(24px, 3vw, 40px); font-size: clamp(2rem, 5vw, 5.25rem); line-height: 1.02; max-width: 22ch; }
+  .manifesto__text {
+    margin-top: clamp(24px, 3vw, 40px);
+    font-size: clamp(2rem, 5vw, 5.25rem); line-height: 1.04;
+    max-width: 22ch;
+  }
+  .manifesto__text .nw { white-space: nowrap; }
   .manifesto__chips { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; margin: clamp(40px, 5vw, 64px) 0 0; padding: 0; }
   .manifesto__chips li { border: 1.5px solid currentColor; border-radius: 999px; padding: 9px 16px; }
+
+  /* Desktop: rótulo e públicos numa coluna lateral, texto ao lado ocupando a largura útil.
+     A primeira linha do texto alinha com o rótulo; os chips descem com a leitura. */
+  @media (min-width: 1100px) {
+    .manifesto__grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 3.2fr);
+      grid-template-rows: auto 1fr;
+      column-gap: clamp(40px, 5vw, 96px);
+    }
+    .manifesto__eyebrow { grid-column: 1; grid-row: 1; margin: 0; padding-top: 0.9em; }
+    .manifesto__text {
+      grid-column: 2; grid-row: 1 / span 2; margin: 0;
+      font-size: clamp(2.75rem, 4.1vw, 4.75rem); line-height: 1.06;
+      max-width: 23ch;
+    }
+    .manifesto__chips {
+      grid-column: 1; grid-row: 2; align-self: start;
+      flex-direction: column; align-items: start;
+      margin-top: clamp(24px, 3vw, 40px);
+    }
+  }
 </style>

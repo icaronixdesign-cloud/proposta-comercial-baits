@@ -32,9 +32,9 @@ sem o arquivo, a seção mostra o painel de cor com retícula e o botão "Baixar
 Basta soltar o arquivo com o nome certo e publicar de novo.
 
 ## Movimento e acessibilidade
-- O Sinal 10 preserva a foto original no arco amarelo. `Personagem.astro` fica na borda superior do rodapé, abaixo da coluna da foto, com 124 px de altura no desktop e 96 px no celular. O boneco caminha uma vez da esquerda para a direita e entra em repouso, sem controles ou seção extra.
-- O personagem é decorativo e não interfere na rolagem ou nos links. Com movimento reduzido, já aparece parado; fora da tela ou com a aba oculta, a renderização pausa. Se WebGL ou o carregamento falhar, o detalhe 3D é omitido e a foto permanece.
-- O modelo usado é `public/models/boneco/boneco-mobile.glb`, suficiente para essa escala em todas as telas. O decoder Meshopt acompanha o bundle, sem dependência de CDN.
+- No Sinal 10 (`Autor.astro`), `Personagem.astro` integra o avatar à esquerda dos projetos, sem painel ou controles extras. Ele entra caminhando da esquerda para a direita uma única vez, para e olha para o portfólio. O olhar acompanha suavemente o ponteiro e o foco nos projetos.
+- No celular, o texto vem primeiro e o avatar fica ao lado das duas faixas de projetos, com deslize manual. Com movimento reduzido, o personagem já aparece parado na posição final, sem acompanhar o ponteiro. Fora da tela ou com a aba oculta, a renderização pausa.
+- Os modelos ficam em `public/models/boneco/`: `boneco.glb` para desktop e `boneco-mobile.glb` para celular. O decoder Meshopt acompanha o bundle; não há dependência de CDN. Sem WebGL ou em caso de falha, aparece o retrato do autor.
 - Trilhos de Método, Entregáveis e Cronograma ficam fixados só com tela ≥ 768 × 560 px e sem `prefers-reduced-motion`;
   nos demais casos viram carrossel nativo, focável e rolável pelas setas do teclado.
 - Com `prefers-reduced-motion: reduce`: sem Lenis, sem preloader, sem pin, sem blur; preços aparecem no valor final.

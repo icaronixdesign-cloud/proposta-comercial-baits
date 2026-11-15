@@ -1,10 +1,7 @@
 ---
 import p from "../data/proposta.json";
-import Personagem from "./Personagem.astro";
 ---
 <footer class="footer tone-choc sheet">
-  <Personagem />
-  <div class="footer__content">
   <div class="wrap footer__row label">
     <span>Proposta para {p.cliente} · por {p.proponente}</span>
     <span>Válida até {p.validade}</span>
@@ -12,12 +9,10 @@ import Personagem from "./Personagem.astro";
     <a class="footer__top" href="#topo">Voltar ao topo ↑</a>
   </div>
   <p class="footer__mark" aria-hidden="true">Baits</p>
-  </div>
 </footer>
 
 <style>
-  .footer { position: relative; }
-  .footer__content { position: relative; overflow: hidden; border-radius: inherit; padding-top: clamp(48px, 6vw, 80px); background: var(--baits-chocolate); }
+  .footer { position: relative; overflow: hidden; padding-top: clamp(48px, 6vw, 80px); }
   .footer__row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; color: color-mix(in srgb, var(--baits-pink-50) 82%, var(--baits-chocolate)); }
   .footer__top { color: var(--baits-yellow); text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1.5px no-repeat; transition: background-size 0.5s var(--ease-out); }
   .footer__top:hover { background-size: 100% 1.5px; }

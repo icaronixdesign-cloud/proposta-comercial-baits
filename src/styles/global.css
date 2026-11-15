@@ -206,6 +206,8 @@ p { text-wrap: pretty; }
 
 .btn--solid { background: var(--baits-yellow); color: var(--baits-chocolate); border-color: var(--baits-yellow); }
 .btn--solid:hover { background: var(--baits-pink); border-color: var(--baits-pink); color: var(--baits-chocolate); }
+.btn--choc { background: var(--baits-chocolate); color: var(--baits-yellow); border-color: var(--baits-chocolate); }
+.btn--choc:hover { background: var(--baits-coral); border-color: var(--baits-coral); color: var(--ink-deep); }
 
 /* Visual com imagem opcional: sem o arquivo, fica o painel de cor com retícula */
 .visual {

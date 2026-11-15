@@ -63,18 +63,10 @@ if (!reduce) {
   const visual = $("[data-hero-visual]");
   const foot = $("[data-hero-in]");
   const tl = gsap.timeline({ delay: PRELOADER_OUT });
-  const disc = $("[data-hero-disc]");
-  if (disc) {
-    // O disco abre a partir do centro
-    tl.from(disc, { scale: 0.2, opacity: 0, duration: 1.4, ease: "expo.out" }, 0);
-  } else if (visual) {
-    const r = getComputedStyle(visual).borderRadius || "24px";
-    tl.fromTo(
-      visual,
-      { clipPath: `inset(100% 0% 0% 0% round ${r})` },
-      { clipPath: `inset(0% 0% 0% 0% round ${r})`, duration: 1.4, ease: "expo.inOut", clearProps: "clipPath" },
-      0
-    );
+  if (visual) {
+    // Ficha-resumo: sobe inclinada e assenta; as linhas entram em seguida
+    tl.from(visual, { y: 80, rotate: 3, opacity: 0, duration: 1.4, ease: "expo.out", clearProps: "transform" }, 0.1);
+    tl.from(visual.children, { y: 16, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.07 }, 0.35);
   }
   if (foot) tl.from(foot.children, { y: 28, opacity: 0, duration: 1.1, ease: "expo.out", stagger: 0.1 }, 0.45);
 }

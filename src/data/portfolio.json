@@ -1,0 +1,23 @@
+{
+  "url": "https://luiz-felipe-design.vercel.app/",
+  "retrato": "img/autor/retrato",
+  "linhas": [
+    [
+      { "nome": "BLT Engenharia", "capa": "blt", "link": "trabalhos/blt-engenharia" },
+      { "nome": "Campus SuperApp", "capa": "campus", "link": "trabalhos/campus" },
+      { "nome": "Healthy Menu", "capa": "healthy-menu", "link": "trabalhos/healthy-menu" },
+      { "nome": "SH Pardo Odontologia", "capa": "sh-pardo", "link": "trabalhos/sh-pardo-odontologia" },
+      { "nome": "Fanta Halloween", "capa": "fanta", "link": "trabalhos/fanta-halloween" },
+      { "nome": "D&Home", "capa": "dhome", "link": "trabalhos/d-home" }
+    ],
+    [
+      { "nome": "Jirau GastroBar", "capa": "jirau", "link": "" },
+      { "nome": "Vellure", "capa": "vellure", "link": "" },
+      { "nome": "Orkut O Anel", "capa": "orkut", "link": "" },
+      { "nome": "Luminous Architecture", "capa": "luminous", "link": "" },
+      { "nome": "Memory Archive", "capa": "memory-archive", "link": "" },
+      { "nome": "CSM Energia", "capa": "csm", "link": "" },
+      { "nome": "Domlog", "capa": "domlog", "link": "" }
+    ]
+  ]
+}

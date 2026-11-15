@@ -16,7 +16,30 @@ const dias = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
       </a>
       <button type="button" class="btn" data-agenda-open aria-haspopup="dialog">Agendar conversa</button>
     </div>
-    <figure class="visual visual--empty aceite__visual tone-violet" aria-hidden="true"></figure>
+    <aside class="passos tone-choc" aria-labelledby="passos-title">
+      <header class="passos__head label">
+        <span id="passos-title">Do aceite à entrega</span>
+        <span>4 passos</span>
+      </header>
+      <ol class="passos__list">
+        <li>
+          <span class="label passos__n">01</span>
+          <div><strong>Aceite</strong><p>Pelo WhatsApp, em um clique, até {p.validade}.</p></div>
+        </li>
+        <li>
+          <span class="label passos__n">02</span>
+          <div><strong>Contrato e pagamento</strong><p>À vista com 5% de desconto ou em 4 parcelas de 25%.</p></div>
+        </li>
+        <li>
+          <span class="label passos__n">03</span>
+          <div><strong>Kickoff</strong><p>Na segunda-feira seguinte, abrindo a imersão da Fase 01.</p></div>
+        </li>
+        <li>
+          <span class="label passos__n">04</span>
+          <div><strong>Entrega</strong><p>{semanas} semanas depois, com o site no ar.</p></div>
+        </li>
+      </ol>
+    </aside>
   </div>
 
   <dialog class="agenda" aria-labelledby="agenda-title" data-agenda data-whatsapp={p.whatsapp} data-cliente={p.cliente} data-semanas={semanas}>
@@ -225,19 +248,39 @@ const dias = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
   .aceite__title { grid-area: title; max-width: 8ch; }
   .aceite__lead { grid-area: lead; }
   .aceite__ctas { grid-area: ctas; display: flex; gap: 12px; flex-wrap: wrap; }
-  .aceite__visual { grid-area: visual; aspect-ratio: 1; align-self: end; border: 2px solid var(--baits-chocolate); place-items: stretch; }
-  .aceite__visual::before {
-    content: ""; position: absolute; inset: 0; z-index: -1;
-    background: radial-gradient(55% 50% at 50% 55%, color-mix(in srgb, var(--baits-pink-50) 70%, transparent), transparent 72%);
+  /* Passos do aceite: a mesma ficha da Hero, agora em chocolate */
+  .passos {
+    grid-area: visual; align-self: end;
+    border-radius: var(--radius);
+    padding: clamp(20px, 2vw, 32px);
+    display: grid; gap: clamp(8px, 1.4vh, 14px);
   }
-  .btn--choc { background: var(--baits-chocolate); color: var(--baits-yellow); border-color: var(--baits-chocolate); }
-  .btn--choc:hover { background: var(--baits-coral); border-color: var(--baits-coral); color: var(--ink-deep); }
+  .passos__head {
+    display: flex; justify-content: space-between; gap: 12px;
+    padding-bottom: 12px; border-bottom: 1.5px solid currentColor;
+    color: var(--baits-yellow);
+  }
+  .passos__list { list-style: none; margin: 0; padding: 0; display: grid; }
+  .passos__list li {
+    display: grid; grid-template-columns: 2.6em 1fr; gap: 12px;
+    padding-block: clamp(12px, 1.8vh, 18px);
+    border-bottom: 1px solid color-mix(in srgb, var(--baits-pink-50) 18%, transparent);
+  }
+  .passos__list li:last-child { border-bottom: 0; padding-bottom: 0; }
+  .passos__n { color: var(--baits-pink); padding-top: 0.3em; }
+  .passos__list strong {
+    display: block; margin-bottom: 4px;
+    font-family: var(--font-display); font-weight: 800;
+    font-size: clamp(1.25rem, 1.6vw, 1.625rem); line-height: 1.05; letter-spacing: -0.02em;
+    color: var(--baits-pink-50);
+  }
+  .passos__list p { line-height: 1.45; }
   @media (max-width: 900px) {
     .aceite__grid {
       grid-template-columns: minmax(0, 1fr);
       grid-template-areas: "eyebrow" "title" "lead" "ctas" "visual";
     }
-    .aceite__visual { aspect-ratio: 4 / 3; margin-top: 16px; }
+    .passos { margin-top: 16px; }
   }
   @media (max-width: 480px) {
     .aceite__ctas .btn { width: 100%; }

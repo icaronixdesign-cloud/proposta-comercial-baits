@@ -3,6 +3,7 @@ import p from "../data/proposta.json";
 import { hasPublic } from "../lib/assets";
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const total = String(p.entregaveis.length).padStart(2, "0");
+const fases = new Map(p.fases.map((f) => [f.n, f]));
 ---
 <section id="entregaveis" class="section h-section entregaveis tone-pink corners sheet" data-horizontal>
   <div class="wrap h-head">
@@ -20,17 +21,31 @@ const total = String(p.entregaveis.length).padStart(2, "0");
     {p.entregaveis.map((e, i) => {
       const n = String(i + 1).padStart(2, "0");
       const foto = hasPublic(e.img);
+      const f = fases.get(e.fase);
       return (
-        <article class="card" style={`--i:${i}`}>
-          <figure class:list={["visual stage", `tone-${e.tom}`, { "visual--empty": !foto }]}>
-            {foto && <img src={`${base}/${e.img}`} alt="" loading="lazy" decoding="async" width="1200" height="900" />}
-            {!foto && <span class="stage__n" aria-hidden="true">{n}</span>}
-            <span class="label stage__tag" aria-hidden="true">{n} / {total}</span>
-          </figure>
+        <article class:list={["card", `tone-${e.tom}`]}>
+          <header class="card__head">
+            <span class="card__n" aria-hidden="true">{n}</span>
+            {f && (
+              <p class="label card__fase">
+                Fase {f.n}<br /><strong>{f.nome}</strong>
+              </p>
+            )}
+          </header>
+          {foto && (
+            <figure class="card__foto">
+              <img src={`${base}/${e.img}`} alt="" loading="lazy" decoding="async" width="1200" height="900" />
+            </figure>
+          )}
           <div class="card__text">
-            <h3 data-panel-title>{e.titulo}</h3>
+            <h3 data-panel-title><span class="sr-only">{n}. </span>{e.titulo}</h3>
             <p>{e.texto}</p>
           </div>
+          <dl class="card__spec">
+            {f && <div><dt class="label">Quando</dt><dd>{f.semanas}</dd></div>}
+            {f && <div><dt class="label">Aprovação</dt><dd>{f.checkpoint}</dd></div>}
+            <div><dt class="label">Revisões</dt><dd>Até 2 rodadas</dd></div>
+          </dl>
         </article>
       );
     })}
@@ -39,41 +54,44 @@ const total = String(p.entregaveis.length).padStart(2, "0");
 </section>
 
 <style>
+  /* Ficha de cada entregável: número, fase, descrição e as condições de entrega */
   .card {
-    width: min(80vw, 440px);
-    display: grid; grid-template-rows: auto auto; gap: clamp(16px, 2.4vh, 24px);
-    align-content: start;
-  }
-  .card__text { display: grid; gap: 8px; padding-inline: 4px; }
-  .card h3 { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.625rem, 2.2vw, 2rem); line-height: 1; letter-spacing: -0.02em; }
-  /* Duas linhas reservadas: todos os títulos ficam na mesma linha de base */
-  .card p { max-width: 32ch; min-height: calc(2 * 1.45em); line-height: 1.45; }
-
-  /* Palco do entregável */
-  .stage {
-    aspect-ratio: 4 / 5;
+    width: min(84vw, 420px);
+    display: flex; flex-direction: column; gap: clamp(16px, 2.4vh, 26px);
+    padding: clamp(20px, min(2vw, 3vh), 30px);
+    border-radius: var(--radius);
     border: 2px solid var(--baits-chocolate);
-    place-items: stretch;
-    overflow: hidden;
   }
-  .stage::before {
-    /* luz no centro do palco */
-    content: ""; position: absolute; inset: 0; z-index: -1;
-    background: radial-gradient(60% 50% at 50% 58%, color-mix(in srgb, var(--baits-pink-50) 55%, transparent), transparent 70%);
+  .card__head {
+    display: flex; justify-content: space-between; align-items: start; gap: 16px;
+    padding-bottom: clamp(12px, 1.8vh, 18px);
+    border-bottom: 1.5px solid currentColor;
   }
-  .stage__n {
-    position: absolute; z-index: -1; left: 50%; top: 46%; translate: -50% -50%;
-    font-family: var(--font-display); font-weight: 800; font-size: clamp(9rem, 22vh, 15rem); line-height: 0.8; letter-spacing: -0.06em;
-    color: transparent; -webkit-text-stroke: 2px color-mix(in srgb, var(--baits-chocolate) 22%, transparent);
-    pointer-events: none; user-select: none;
+  .card__n {
+    font-family: var(--font-display); font-weight: 800;
+    font-size: clamp(4.5rem, min(7vw, 13vh), 7.5rem); line-height: 0.8; letter-spacing: -0.06em;
   }
-  .stage__tag {
-    position: absolute; top: clamp(14px, 1.4vw, 20px); left: clamp(14px, 1.4vw, 20px);
-    background: var(--baits-chocolate); color: var(--baits-pink-50);
-    padding: 5px 10px; border-radius: 999px; letter-spacing: 0.08em;
+  .card__fase { text-align: right; }
+  .card__fase strong { font-weight: 700; }
+  .card__foto {
+    margin: 0; aspect-ratio: 16 / 10; overflow: hidden;
+    border-radius: calc(var(--radius) * 0.6);
   }
+  .card__foto img { width: 100%; height: 100%; object-fit: cover; }
+  .card__text { display: grid; gap: 8px; }
+  .card h3 {
+    font-family: var(--font-display); font-weight: 800;
+    font-size: clamp(1.75rem, min(2.4vw, 4.4vh), 2.375rem); line-height: 0.98; letter-spacing: -0.025em;
+  }
+  .card__text p { max-width: 30ch; line-height: 1.45; min-height: calc(2 * 1.45em); }
+  .card__spec { margin: auto 0 0; display: grid; }
+  .card__spec div {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+    padding-block: clamp(7px, 1.1vh, 10px);
+    border-top: 1px solid color-mix(in srgb, currentColor 28%, transparent);
+  }
+  .card__spec dd { margin: 0; font-weight: 600; text-align: right; }
 
-  /* Fixado: o palco ocupa a altura que sobra, todos com a mesma altura e largura proporcional */
-  .entregaveis.is-pinned .card { height: 100%; grid-template-rows: minmax(0, 1fr) auto; width: auto; }
-  .entregaveis.is-pinned .stage { height: 100%; width: auto; aspect-ratio: 4 / 5; max-width: 80vw; }
+  /* Fixado: cartões na altura do próprio conteúdo, centralizados na faixa */
+  .entregaveis.is-pinned .h-track { align-items: center; }
 </style>

@@ -1,0 +1,165 @@
+---
+import p from "../data/proposta.json";
+import port from "../data/portfolio.json";
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const capa = (slug: string, w: number) => `${base}/img/portfolio/${slug}-${w}.webp`;
+const retrato = `${base}/${port.retrato}`;
+---
+<section id="autor" class="section autor tone-pink50 corners sheet" aria-labelledby="autor-title">
+  <div class="wrap autor__grid">
+    <figure class="autor__retrato">
+      <img
+        src={`${retrato}-640.webp`}
+        srcset={`${retrato}-640.webp 640w, ${retrato}-1176.webp 1176w`}
+        sizes="(max-width: 900px) 80vw, 32vw"
+        alt={`Retrato de ${p.proponente}`}
+        width="1176" height="1397" loading="lazy" decoding="async"
+      />
+      <figcaption class="label autor__tag">Proponente</figcaption>
+    </figure>
+
+    <div class="autor__body">
+      <p class="label eyebrow">Sinal 10 · Quem assina</p>
+      <h2 class="h2 autor__name" id="autor-title" data-fade data-fade-stay>{p.proponente}</h2>
+      <p class="label autor__papel">{p.papel}</p>
+      <p class="lead autor__bio">
+        Designer UI/UX e desenvolvedor. Desenvolvo websites personalizados para negócios que querem
+        ser encontrados, transmitir confiança e transformar visitas em clientes.
+      </p>
+
+      <div class="obras" role="group" aria-label="Projetos do portfólio">
+        {port.linhas.map((linha, r) => (
+          <div class:list={["obras__row", { "obras__row--rev": r % 2 === 1 }]} style={`--dur: ${linha.length * 7}s`}>
+            <ul class="obras__track">
+              {[...linha, ...linha].map((o, i) => {
+                const dup = i >= linha.length;
+                return (
+                  <li aria-hidden={dup ? "true" : undefined} class:list={{ "obras__dup": dup }}>
+                    <a
+                      class="obras__item"
+                      href={`${port.url}${o.link}`}
+                      target="_blank" rel="noopener"
+                      tabindex={dup ? -1 : undefined}
+                      aria-label={`${o.nome}, ver no portfólio (abre em nova aba)`}
+                    >
+                      <img
+                        src={capa(o.capa, 480)}
+                        srcset={`${capa(o.capa, 480)} 480w, ${capa(o.capa, 800)} 800w`}
+                        sizes="(max-width: 767px) 70vw, 340px"
+                        alt="" width="800" height="450" decoding="async" fetchpriority="low"
+                      />
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      <div class="autor__cta">
+        <a class="btn btn--choc" href={port.url} target="_blank" rel="noopener">
+          Ver portfólio completo
+          <svg class="btn__icon btn__icon--right" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 11 11 3M4.5 3H11v6.5" fill="none" stroke="currentColor" stroke-width="2" /></svg>
+        </a>
+        <p class="label autor__hint">Passe o mouse para pausar · clique para abrir o case</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .autor { overflow: hidden; }
+  .autor__grid {
+    display: grid;
+    grid-template-columns: clamp(260px, 30vw, 460px) minmax(0, 1fr);
+    column-gap: clamp(32px, 5vw, 96px);
+    align-items: end;
+  }
+
+  /* Retrato recortado dentro de um arco amarelo com retícula */
+  .autor__retrato {
+    position: relative; margin: 0;
+    aspect-ratio: 4 / 5;
+    border-radius: 999px 999px var(--radius) var(--radius);
+    overflow: hidden; isolation: isolate;
+    background:
+      radial-gradient(70% 55% at 50% 30%, color-mix(in srgb, var(--baits-pink-50) 45%, var(--baits-yellow)) 0%, transparent 70%),
+      var(--baits-yellow);
+    border: 2px solid var(--baits-chocolate);
+  }
+  .autor__retrato::before {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background-image: radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--baits-chocolate) 20%, transparent) 1.1px, transparent 0);
+    background-size: 18px 18px;
+    -webkit-mask: linear-gradient(to top, #000, transparent 70%);
+            mask: linear-gradient(to top, #000, transparent 70%);
+  }
+  .autor__retrato img {
+    position: absolute; left: 50%; bottom: 0; translate: -50% 0;
+    width: 94%; height: auto;
+  }
+  .autor__tag {
+    position: absolute; left: 50%; bottom: clamp(14px, 1.4vw, 20px); translate: -50% 0;
+    background: var(--baits-chocolate); color: var(--baits-pink-50);
+    padding: 6px 12px; border-radius: 999px; white-space: nowrap;
+  }
+
+  .autor__body { min-width: 0; display: grid; }
+  .autor__name { color: var(--baits-chocolate); max-width: 14ch; }
+  .autor__papel { margin-top: clamp(12px, 1.6vh, 18px); }
+  .autor__bio { margin-top: clamp(16px, 2.2vh, 24px); max-width: 44ch; }
+
+  /* Projetos passando: duas faixas em sentidos opostos, sangrando pela direita */
+  .obras {
+    display: grid; gap: var(--gutter);
+    margin-top: clamp(28px, 4.5vh, 48px);
+    margin-right: calc(var(--margin) * -1);
+    overflow: hidden;
+    -webkit-mask: linear-gradient(90deg, transparent, #000 5%, #000 92%, transparent);
+            mask: linear-gradient(90deg, transparent, #000 5%, #000 92%, transparent);
+  }
+  .obras__track {
+    list-style: none; margin: 0; padding: 4px 0;
+    display: flex; gap: var(--gutter); width: max-content;
+    animation: obras var(--dur, 42s) linear infinite;
+  }
+  .obras__row--rev .obras__track { animation-direction: reverse; }
+  .obras:hover .obras__track,
+  .obras:focus-within .obras__track { animation-play-state: paused; }
+  /* Duas cópias: andar metade da faixa (mais meio gap) fecha o ciclo sem emenda */
+  @keyframes obras { to { transform: translateX(calc(-50% - var(--gutter) / 2)); } }
+
+  .obras__item {
+    display: block; width: clamp(240px, 21vw, 340px); aspect-ratio: 16 / 9;
+    border-radius: 14px; overflow: hidden;
+    border: 2px solid var(--baits-chocolate);
+    background: var(--baits-cream);
+    transition: translate 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out);
+  }
+  .obras__item img { width: 100%; height: 100%; object-fit: cover; }
+  .obras__item:hover, .obras__item:focus-visible {
+    translate: 0 -4px;
+    box-shadow: 0 18px 30px -18px color-mix(in srgb, var(--baits-chocolate) 60%, transparent);
+  }
+
+  .autor__cta {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px;
+    margin-top: clamp(28px, 4vh, 44px);
+  }
+
+  @media (max-width: 900px) {
+    .autor__grid { grid-template-columns: minmax(0, 1fr); row-gap: 32px; }
+    .autor__retrato { order: -1; width: min(100%, 360px); }
+  }
+  @media (max-width: 480px) {
+    .autor__cta .btn { width: 100%; }
+  }
+  /* Sem movimento: as faixas viram carrosséis roláveis, sem as cópias */
+  @media (prefers-reduced-motion: reduce) {
+    .obras__track { animation: none; }
+    .obras__row { overflow-x: auto; scrollbar-width: thin; }
+    .obras__dup { display: none; }
+    .autor__hint { display: none; }
+  }
+</style>

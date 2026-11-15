@@ -12,3 +12,6 @@ Na pasta public/: proposta-baits.pdf (versao assinavel) e og-baits.png (1200x630
 
 O personagem Braian nao aparece no site: a proposta vende a criacao da marca,
 entao a Hero e o Aceite usam so grafismos.
+
+img/autor/ e img/portfolio/: retrato e capas copiados de Documents/Claude/portfolio-2/public/media/hero/
+(secao "Quem assina"; os links e nomes ficam em src/data/portfolio.json).

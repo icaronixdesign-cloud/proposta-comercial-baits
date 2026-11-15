@@ -4,7 +4,6 @@ const brl = (n: number) => n.toLocaleString("pt-BR");
 const k = p.plano;
 const vista = Math.round(k.valor * 0.95);
 const economia = k.valor - vista;
-const parcela = Math.round(k.valor / 4);
 ---
 <section id="investimento" class="section investimento tone-pink50 corners sheet" data-investimento>
   <div class="wrap investimento__inner">
@@ -44,8 +43,8 @@ const parcela = Math.round(k.valor / 4);
         </div>
 
         <div class="pay__alt">
-          <span class="label">Ou parcelado</span>
-          <p><strong>4 × R$ {brl(parcela)}</strong> <span>(25% cada, sem desconto)</span></p>
+          <span class="label">Ou, se preferir</span>
+          <p><strong>Parcelado em até 15x de R$ 8.900</strong></p>
         </div>
       </aside>
     </div>

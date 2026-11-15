@@ -82,7 +82,7 @@
   ],
 
   "condicoes": [
-    { "titulo": "Pagamento", "texto": "À vista na assinatura, com 5% de desconto: R$ 127.224 (de R$ 133.920). Ou em 4 parcelas de 25% (R$ 33.480 cada)." },
+    { "titulo": "Pagamento", "texto": "À vista na assinatura, com 5% de desconto: R$ 127.224 (de R$ 133.920). Ou parcelado em até 15x de R$ 8.900." },
     { "titulo": "Revisões", "texto": "Até 2 rodadas por entregável. Feedback consolidado em até 3 dias úteis; atrasos de aprovação deslocam o cronograma na mesma medida." },
     { "titulo": "Direitos", "texto": "Cessão dos direitos patrimoniais ao cliente após a quitação. O proponente pode exibir o projeto em portfólio após o lançamento." },
     { "titulo": "Fora do escopo", "texto": "Impressão, compra de mídia, fotografia de produto, registro no INPI, licenças de fontes e imagens, código do app, consultoria regulatória e nutricional, hospedagem e domínio." },

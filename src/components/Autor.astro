@@ -69,12 +69,19 @@ const retrato = `${base}/${port.retrato}`;
 </section>
 
 <style>
-  .autor { overflow: hidden; }
+  /* clip (e não hidden) para o retrato poder ficar sticky: hidden criaria um contêiner de rolagem */
+  .autor { overflow: hidden; overflow: clip; }
   .autor__grid {
     display: grid;
     grid-template-columns: clamp(260px, 30vw, 460px) minmax(0, 1fr);
     column-gap: clamp(32px, 5vw, 96px);
     align-items: end;
+  }
+  /* Desktop: o retrato acompanha a rolagem enquanto o texto e os projetos passam,
+     e assenta alinhado ao fim da coluna */
+  @media (min-width: 901px) {
+    .autor__grid { align-items: start; }
+    .autor__grid .autor__retrato { position: sticky; top: clamp(96px, 13vh, 128px); }
   }
 
   /* Retrato recortado dentro de um arco amarelo com retícula */

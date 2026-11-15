@@ -3,9 +3,7 @@ import p from "../data/proposta.json";
 import { hasPublic } from "../lib/assets";
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const hasPdf = hasPublic(p.pdf);
-const brl = (n: number) => n.toLocaleString("pt-BR");
 const k = p.plano;
-const vista = Math.round(k.valor * 0.95);
 ---
 <section id="topo" class="hero tone-choc corners">
   <div class="wrap hero__grid">
@@ -14,7 +12,7 @@ const vista = Math.round(k.valor * 0.95);
       Proposta Comercial <span class="hero__dash" aria-hidden="true">—</span> <em>BAITS</em>
     </h1>
     <blockquote class="hero__quote" data-fade>
-      <p>“Se o músculo tem nutrição, por que a mente não?”</p>
+      <p>Se o músculo tem nutrição, por que a mente não?</p>
     </blockquote>
 
     <div class="hero__foot" data-hero-in>
@@ -24,18 +22,14 @@ const vista = Math.round(k.valor * 0.95);
         <div><dt>Data</dt><dd>{p.data}</dd></div>
         <div><dt>Válida até</dt><dd>{p.validade}</dd></div>
       </dl>
-      <div class="hero__ctas">
-        <a class="btn btn--solid" href="#investimento">
-          Ver investimento
-          <svg class="btn__icon btn__icon--down" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1v11M2 7.5 7 12.5l5-5" fill="none" stroke="currentColor" stroke-width="2" /></svg>
-        </a>
-        {hasPdf && (
+      {hasPdf && (
+        <div class="hero__ctas">
           <a class="btn" href={`${base}/${p.pdf}`} download>
             Baixar PDF
             <svg class="btn__icon btn__icon--down" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1v8M3 5.5 7 9.5l4-4M1.5 13h11" fill="none" stroke="currentColor" stroke-width="2" /></svg>
           </a>
-        )}
-      </div>
+        </div>
+      )}
     </div>
 
     <!-- Resumo da proposta: o que o cliente precisa saber antes de rolar -->
@@ -55,11 +49,6 @@ const vista = Math.round(k.valor * 0.95);
         <div><dt class="label">Entregáveis</dt><dd>{p.entregaveis.length} frentes</dd></div>
         <div><dt class="label">Aprovações</dt><dd>{p.marcos.length} checkpoints com data</dd></div>
       </dl>
-      <div class="ficha__total">
-        <span class="label">Investimento total</span>
-        <strong>R$ {brl(k.valor)}</strong>
-        <span class="label ficha__vista">ou R$ {brl(vista)} à vista · −5%</span>
-      </div>
     </aside>
   </div>
 </section>
@@ -141,18 +130,6 @@ const vista = Math.round(k.valor * 0.95);
     border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent);
   }
   .ficha__rows dd { margin: 0; font-weight: 600; text-align: right; }
-  .ficha__total {
-    display: grid; gap: 4px;
-    padding: clamp(14px, 1.6vw, 20px);
-    border-radius: calc(var(--radius) * 0.6);
-    background: var(--baits-chocolate); color: var(--baits-pink-50);
-  }
-  .ficha__total strong {
-    font-family: var(--font-display); font-weight: 800;
-    font-size: clamp(2rem, 2.8vw, 2.875rem); line-height: 1; letter-spacing: -0.03em;
-    color: var(--baits-yellow); font-variant-numeric: tabular-nums;
-  }
-  .ficha__vista { color: color-mix(in srgb, var(--baits-pink-50) 72%, transparent); }
 
   @media (max-width: 900px) {
     .hero__grid {

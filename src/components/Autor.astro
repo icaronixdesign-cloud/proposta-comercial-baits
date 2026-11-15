@@ -1,24 +1,16 @@
 ---
 import p from "../data/proposta.json";
 import port from "../data/portfolio.json";
+import Personagem from "./Personagem.astro";
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const capa = (slug: string, w: number) => `${base}/img/portfolio/${slug}-${w}.webp`;
-const retrato = `${base}/${port.retrato}`;
 ---
 <section id="autor" class="section autor tone-pink50 corners sheet" aria-labelledby="autor-title">
   <div class="wrap autor__grid">
-    <figure class="autor__retrato">
-      <img
-        src={`${retrato}-640.webp`}
-        srcset={`${retrato}-640.webp 640w, ${retrato}-1176.webp 1176w`}
-        sizes="(max-width: 900px) 80vw, 32vw"
-        alt={`Retrato de ${p.proponente}`}
-        width="1176" height="1397" loading="lazy" decoding="async"
-      />
-      <figcaption class="label autor__tag">Proponente</figcaption>
-    </figure>
-
-    <div class="autor__body">
+    <div class="autor__avatar">
+      <Personagem />
+    </div>
+    <header class="autor__intro">
       <p class="label eyebrow">Sinal 10 · Quem assina</p>
       <h2 class="h2 autor__name" id="autor-title" data-fade data-fade-stay>{p.proponente}</h2>
       <p class="label autor__papel">{p.papel}</p>
@@ -26,7 +18,7 @@ const retrato = `${base}/${port.retrato}`;
         Designer UI/UX e desenvolvedor. Desenvolvo websites personalizados para negócios que querem
         ser encontrados, transmitir confiança e transformar visitas em clientes.
       </p>
-
+    </header>
       <div class="obras" role="group" aria-label="Projetos do portfólio">
         {port.linhas.map((linha, r) => (
           <div class:list={["obras__row", { "obras__row--rev": r % 2 === 1 }]} style={`--dur: ${linha.length * 7}s`}>
@@ -64,61 +56,31 @@ const retrato = `${base}/${port.retrato}`;
         </a>
         <p class="label autor__hint">Passe o mouse para pausar · clique para abrir o case</p>
       </div>
-    </div>
   </div>
 </section>
 
 <style>
-  /* clip (e não hidden) para o retrato poder ficar sticky: hidden criaria um contêiner de rolagem */
+  /* O avatar acompanha os projetos sem criar outro bloco de conteúdo. */
   .autor { overflow: hidden; overflow: clip; }
   .autor__grid {
     display: grid;
-    grid-template-columns: clamp(260px, 30vw, 460px) minmax(0, 1fr);
-    column-gap: clamp(32px, 5vw, 96px);
-    align-items: end;
+    grid-template-columns: clamp(240px, 28vw, 420px) minmax(0, 1fr);
+    grid-template-areas: "avatar intro" "avatar projects" "avatar cta";
+    column-gap: clamp(32px, 5vw, 80px);
+    align-items: start;
   }
-  /* Desktop: o retrato acompanha a rolagem enquanto o texto e os projetos passam,
-     e assenta alinhado ao fim da coluna */
-  @media (min-width: 901px) {
-    .autor__grid { align-items: start; }
-    .autor__grid .autor__retrato { position: sticky; top: clamp(96px, 13vh, 128px); }
+  .autor__avatar {
+    grid-area: avatar; align-self: stretch; min-width: 0;
+    padding-top: clamp(120px, 12vw, 180px);
   }
-
-  /* Retrato recortado dentro de um arco amarelo com retícula */
-  .autor__retrato {
-    position: relative; margin: 0;
-    aspect-ratio: 4 / 5;
-    border-radius: 999px 999px var(--radius) var(--radius);
-    overflow: hidden; isolation: isolate;
-    background:
-      radial-gradient(70% 55% at 50% 30%, color-mix(in srgb, var(--baits-pink-50) 45%, var(--baits-yellow)) 0%, transparent 70%),
-      var(--baits-yellow);
-    border: 2px solid var(--baits-chocolate);
-  }
-  .autor__retrato::before {
-    content: ""; position: absolute; inset: 0; z-index: -1;
-    background-image: radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--baits-chocolate) 20%, transparent) 1.1px, transparent 0);
-    background-size: 18px 18px;
-    -webkit-mask: linear-gradient(to top, #000, transparent 70%);
-            mask: linear-gradient(to top, #000, transparent 70%);
-  }
-  .autor__retrato img {
-    position: absolute; left: 50%; bottom: 0; translate: -50% 0;
-    width: 94%; height: auto;
-  }
-  .autor__tag {
-    position: absolute; left: 50%; bottom: clamp(14px, 1.4vw, 20px); translate: -50% 0;
-    background: var(--baits-chocolate); color: var(--baits-pink-50);
-    padding: 6px 12px; border-radius: 999px; white-space: nowrap;
-  }
-
-  .autor__body { min-width: 0; display: grid; }
+  .autor__intro { grid-area: intro; min-width: 0; }
   .autor__name { color: var(--baits-chocolate); max-width: 14ch; }
   .autor__papel { margin-top: clamp(12px, 1.6vh, 18px); }
   .autor__bio { margin-top: clamp(16px, 2.2vh, 24px); max-width: 44ch; }
 
   /* Projetos passando: duas faixas em sentidos opostos, sangrando pela direita */
   .obras {
+    grid-area: projects; min-width: 0;
     display: grid; gap: var(--gutter);
     margin-top: clamp(28px, 4.5vh, 48px);
     margin-right: calc(var(--margin) * -1);
@@ -140,24 +102,42 @@ const retrato = `${base}/${port.retrato}`;
   .obras__item {
     display: block; width: clamp(240px, 21vw, 340px); aspect-ratio: 16 / 9;
     border-radius: 14px; overflow: hidden;
-    border: 2px solid var(--baits-chocolate);
     background: var(--baits-cream);
     transition: translate 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out);
   }
   .obras__item img { width: 100%; height: 100%; object-fit: cover; }
+  .obras__item:focus-visible { outline-offset: -5px; }
   .obras__item:hover, .obras__item:focus-visible {
     translate: 0 -4px;
     box-shadow: 0 18px 30px -18px color-mix(in srgb, var(--baits-chocolate) 60%, transparent);
   }
 
   .autor__cta {
+    grid-area: cta;
     display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px;
     margin-top: clamp(28px, 4vh, 44px);
   }
 
   @media (max-width: 900px) {
-    .autor__grid { grid-template-columns: minmax(0, 1fr); row-gap: 32px; }
-    .autor__retrato { order: -1; width: min(100%, 360px); }
+    .autor__grid {
+      grid-template-columns: clamp(100px, 23vw, 200px) minmax(0, 1fr);
+      grid-template-areas: "intro intro" "avatar projects" "cta cta";
+      column-gap: 16px; row-gap: 28px;
+    }
+    .autor__avatar { align-self: center; padding-top: 0; }
+    .autor__name { max-width: 18ch; }
+    .obras { margin-top: 0; gap: 12px; }
+    .obras__row {
+      overflow-x: auto; overscroll-behavior-x: contain;
+      scroll-snap-type: x proximity; scrollbar-width: none;
+    }
+    .obras__track { animation: none; }
+    .obras__dup { display: none; }
+    .obras__row::-webkit-scrollbar { display: none; }
+    .obras__item { width: clamp(184px, 52vw, 300px); border-radius: 10px; }
+    .obras__track > li { scroll-snap-align: start; }
+    .autor__cta { margin-top: 0; }
+    .autor__hint { display: none; }
   }
   @media (max-width: 480px) {
     .autor__cta .btn { width: 100%; }

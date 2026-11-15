@@ -310,6 +310,21 @@ function initPageProgress() {
 /* abaixo deles, por último o que depende da altura total da página.     */
 /* ------------------------------------------------------------------ */
 let started = false;
+const initialHash = location.hash;
+const alignInitialAnchor = () => {
+  if (initialHash.length < 2 || location.hash !== initialHash) return;
+  // Let the pin refresh and the browser's initial scroll restoration finish first.
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    let id = initialHash.slice(1);
+    try { id = decodeURIComponent(id); } catch { /* Keep literal malformed hashes harmless. */ }
+    const target = document.getElementById(id);
+    if (!target) return;
+    if (lenis) {
+      lenis.resize();
+      lenis.scrollTo(window.scrollY + scrollAnchor(target).getBoundingClientRect().top, { immediate: true, force: true });
+    } else scrollAnchor(target).scrollIntoView();
+  }));
+};
 const start = () => {
   if (started) return;
   started = true;
@@ -318,8 +333,12 @@ const start = () => {
   initPrices();
   initPageProgress();
   ScrollTrigger.refresh();
+  if (document.readyState === "complete") alignInitialAnchor();
 };
 document.fonts.ready.then(start);
 // Rede lenta: não segura a página esperando as fontes
 setTimeout(start, 2500);
-window.addEventListener("load", () => ScrollTrigger.refresh());
+window.addEventListener("load", () => {
+  ScrollTrigger.refresh();
+  if (started) alignInitialAnchor();
+});

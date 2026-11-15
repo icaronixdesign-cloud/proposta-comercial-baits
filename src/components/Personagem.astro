@@ -1,41 +1,29 @@
 ---
-import p from "../data/proposta.json";
-import port from "../data/portfolio.json";
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
-<figure class="personagem" data-character data-base={base} role="img" aria-label={`${p.proponente}, olhando para os projetos do portfólio`}>
-  <img class="personagem__fallback" data-fallback src={`${base}/${port.retrato}-640.webp`} alt="" width="640" height="760" loading="lazy" decoding="async" />
-  <canvas data-canvas aria-hidden="true" hidden></canvas>
-</figure>
+<div class="personagem" data-character data-base={base} aria-hidden="true">
+  <canvas data-canvas></canvas>
+</div>
 <script>
   const host = document.querySelector<HTMLElement>("[data-character]");
   if (host) {
     const observer = new IntersectionObserver((entries) => {
       if (!entries.some((entry) => entry.isIntersecting)) return;
       observer.disconnect();
-      import("../scripts/personagem").then(({ initCharacter }) => initCharacter(host)).catch((error) => {
-        console.warn("O retrato será mantido no lugar do personagem 3D.", error);
-      });
-    }, { rootMargin: "400px" });
+      import("../scripts/personagem").then(({ initCharacter }) => initCharacter(host)).catch(() => {});
+    }, { rootMargin: "300px" });
     observer.observe(host);
   }
 </script>
 <style>
   .personagem {
-    position: sticky; top: clamp(96px, 13vh, 128px);
-    width: 100%; height: min(580px, 72svh); min-height: 360px;
-    margin: 0; pointer-events: none;
+    position: absolute; bottom: 100%; left: var(--margin);
+    width: clamp(260px, 30vw, 460px); height: 124px;
+    pointer-events: none; z-index: 1;
   }
-  .personagem canvas { display: block; width: 100%; height: 100%; }
-  .personagem canvas[hidden] { display: none; }
-  .personagem__fallback {
-    position: absolute; inset: 0; width: 100%; height: 100%;
-    object-fit: contain; object-position: center bottom;
-    -webkit-mask-image: linear-gradient(#000 86%, transparent);
-    mask-image: linear-gradient(#000 86%, transparent);
-  }
-  .personagem.is-ready .personagem__fallback { visibility: hidden; }
+  .personagem canvas { display: block; width: 100%; height: 100%; opacity: 0; transition: opacity 0.4s ease; }
+  .personagem.is-ready canvas { opacity: 1; }
   @media (max-width: 900px) {
-    .personagem { position: relative; top: auto; height: clamp(240px, 40vw, 360px); min-height: 0; }
+    .personagem { width: min(75vw, 360px); height: 96px; }
   }
 </style>

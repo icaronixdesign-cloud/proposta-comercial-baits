@@ -1,19 +1,20 @@
-# Próximos passos (estado em 14/11/2026)
+# Próximos passos (estado em 15/11/2026)
 
 ## Onde paramos
-- Último trabalho: commit 742c833 na `main` (refino visual, animações, contraste AA, reduced motion, teclado).
-- `npm run build` passa local e no GitHub Actions.
-- Publicado também na Vercel: `astro.config.mjs` usa base `/` quando `VERCEL` está definido (Vercel) e `/proposta-comercial-baits` no GitHub Pages.
-- **Deploy ainda falha** em `actions/configure-pages`: o GitHub Pages não está habilitado no repositório.
+- No ar na Vercel: https://proposta-comercial-baits.vercel.app/ (publica sozinho a cada push na `main`).
+- `astro.config.mjs` usa base `/` quando `VERCEL` está definido e `/proposta-comercial-baits` no GitHub Pages.
+- Feito: refino visual, animações (pins, fade, contadores, chave à vista), contraste AA, reduced motion, teclado.
+- O workflow do GitHub Pages falha em `configure-pages` porque o Pages não está ativado (não afeta a Vercel).
 
 ## Pendências
-1. Settings → Pages → Build and deployment → **Source: GitHub Actions**; depois Actions → última execução → **Re-run all jobs**.
-2. Trocar `email` em `src/data/proposta.json` (hoje `seu-email@exemplo.com`).
-3. Adicionar imagens em `public/img/` (nomes em `LEIA-ME.txt`), `public/proposta-baits.pdf` e `public/og-baits.png`.
+1. Trocar `email` em `src/data/proposta.json` (hoje `seu-email@exemplo.com`).
+2. Adicionar imagens em `public/img/` (nomes em `LEIA-ME.txt`), `public/proposta-baits.pdf` e `public/og-baits.png`.
    O site detecta os arquivos no build; o botão "Baixar PDF" só aparece quando o PDF existir.
+3. Decidir o GitHub Pages: ativar (Settings → Pages → Source: GitHub Actions) ou remover `.github/workflows/deploy.yml`.
 
 ## Mensagem para colar num chat novo
 > Continue o projeto em C:\Users\Icaronix\Documents\proposta-comercial-baits
-> (repo icaronixdesign-cloud/proposta-comercial-baits). Leia PROXIMOS-PASSOS.md e README.md.
-> Rode `npm install` e `npm run dev` (http://localhost:4321/proposta-comercial-baits/).
-> Não mude valores, prazos ou textos de proposta.json sem me perguntar. Commit e push na main.
+> (repo icaronixdesign-cloud/proposta-comercial-baits, no ar em https://proposta-comercial-baits.vercel.app/).
+> Leia PROXIMOS-PASSOS.md e README.md. Rode `npm install` e `npm run dev`
+> (http://localhost:4321/proposta-comercial-baits/). Não mude valores, prazos ou textos de proposta.json
+> sem me perguntar. Commit e push na main (a Vercel publica sozinha).

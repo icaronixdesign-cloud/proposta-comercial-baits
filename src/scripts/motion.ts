@@ -63,7 +63,13 @@ if (!reduce) {
   const visual = $("[data-hero-visual]");
   const foot = $("[data-hero-in]");
   const tl = gsap.timeline({ delay: PRELOADER_OUT });
-  if (visual) {
+  const disc = $("[data-hero-disc]");
+  const char = $("[data-hero-char]");
+  if (disc && char) {
+    // Braian 3D: o disco abre e o personagem sobe para dentro dele
+    tl.from(disc, { scale: 0.2, opacity: 0, duration: 1.4, ease: "expo.out" }, 0);
+    tl.from(char, { yPercent: 28, opacity: 0, duration: 1.5, ease: "expo.out" }, 0.15);
+  } else if (visual) {
     const r = getComputedStyle(visual).borderRadius || "24px";
     tl.fromTo(
       visual,

@@ -5,6 +5,7 @@
   "email": "seu-email@exemplo.com",
   "data": "14/11/2026",
   "validade": "29/11/2026",
+  "whatsapp": "5535991550698",
   "pdf": "proposta-baits.pdf",
 
   "manifesto": "Shakes, barras e suplementos falam de músculos. Mas milhões de pessoas passam o dia inteiro usando só a cabeça — programando, criando, resolvendo problemas. Essa exaustão nunca foi tratada como real. A Baits existe para ela.",
@@ -68,14 +69,10 @@
     { "nome": "Entrega", "semana": 12 }
   ],
 
-  "pacotes": [
-    { "id": "start", "nome": "Start", "rotulo": "Essencial", "semanas": 8, "horas": 238, "valor": 42840, "tom": "violet",
-      "itens": ["Pesquisa enxuta (6 entrevistas)", "Plataforma de marca", "Identidade visual", "Braian em 2D", "3 embalagens de barra", "Brandbook"] },
-    { "id": "flow", "nome": "Flow", "rotulo": "Recomendado", "semanas": 12, "horas": 458, "valor": 82440, "tom": "pink", "destaque": true,
-      "itens": ["Double Diamond completo", "10 entrevistas + questionário", "Identidade e Braian 2D/3D", "6 embalagens", "Kit de lançamento", "UI do site + design system"] },
-    { "id": "digital", "nome": "Flow + Digital", "rotulo": "Ecossistema", "semanas": 16, "horas": 744, "valor": 133920, "tom": "yellow",
-      "itens": ["Tudo do Flow", "Site desenvolvido e publicado", "UX/UI do app de foco (MVP)", "Até 25 telas, protótipo e teste"] }
-  ],
+  "plano": {
+    "nome": "Flow + Digital", "rotulo": "Ecossistema completo", "semanas": 16, "horas": 744, "valor": 133920, "tom": "yellow",
+    "itens": ["Double Diamond completo", "10 entrevistas + questionário", "Identidade e Braian 2D/3D", "6 embalagens", "Kit de lançamento", "UI do site + design system", "Site desenvolvido e publicado", "UX/UI do app de foco (MVP)", "Até 25 telas, protótipo e teste"]
+  },
 
   "principios": [
     { "titulo": "Estratégia antes da forma", "texto": "Nenhum pixel antes de entender quem vive de pensar." },
@@ -85,7 +82,7 @@
   ],
 
   "condicoes": [
-    { "titulo": "Pagamento", "texto": "Flow: 30% na assinatura, 30% no Checkpoint 2 e 40% na entrega final. Start: 40% + 60%. Flow + Digital: 4 × 25%. Pagamento integral na assinatura tem 5% de desconto." },
+    { "titulo": "Pagamento", "texto": "À vista na assinatura, com 5% de desconto: R$ 127.224 (de R$ 133.920). Ou em 4 parcelas de 25% (R$ 33.480 cada)." },
     { "titulo": "Revisões", "texto": "Até 2 rodadas por entregável. Feedback consolidado em até 3 dias úteis; atrasos de aprovação deslocam o cronograma na mesma medida." },
     { "titulo": "Direitos", "texto": "Cessão dos direitos patrimoniais ao cliente após a quitação. O proponente pode exibir o projeto em portfólio após o lançamento." },
     { "titulo": "Fora do escopo", "texto": "Impressão, compra de mídia, fotografia de produto, registro no INPI, licenças de fontes e imagens, código do app, consultoria regulatória e nutricional, hospedagem e domínio." },

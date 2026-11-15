@@ -35,7 +35,9 @@ Basta soltar o arquivo com o nome certo e publicar de novo.
 - Trilhos de Método, Entregáveis e Cronograma ficam fixados só com tela ≥ 768 × 560 px e sem `prefers-reduced-motion`;
   nos demais casos viram carrossel nativo, focável e rolável pelas setas do teclado.
 - Com `prefers-reduced-motion: reduce`: sem Lenis, sem preloader, sem pin, sem blur; preços aparecem no valor final.
-- Âncoras internas movem o foco para a seção de destino; a chave "à vista" anuncia a troca de valores para leitores de tela.
+- Âncoras internas movem o foco para a seção de destino.
+- "Aceitar proposta" e a agenda de "Agendar conversa" abrem o WhatsApp (`whatsapp` em `proposta.json`).
+  A agenda vai de amanhã até a sexta da última semana do projeto (kickoff na segunda seguinte + `plano.semanas`).
 
 ## Antes do v1.0.0
 - [ ] Trocar `email` em `src/data/proposta.json` pelo seu e-mail de contato

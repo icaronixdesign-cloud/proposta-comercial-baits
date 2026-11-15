@@ -24,6 +24,10 @@ if (!reduce) {
   gsap.ticker.lagSmoothing(0);
 }
 
+// Overlays (agenda) travam a rolagem suave enquanto estão abertos
+window.addEventListener("baits:scroll-lock", () => lenis?.stop());
+window.addEventListener("baits:scroll-unlock", () => lenis?.start());
+
 // Âncoras internas: rolagem suave e foco no destino (teclado e leitor de tela)
 const scrollAnchor = (el: HTMLElement) =>
   el.parentElement?.classList.contains("pin-spacer") ? el.parentElement : el;
@@ -225,7 +229,8 @@ function initTypography() {
 
     // Saída: só quando o bloco já está deixando a tela pelo topo.
     // Em seção fixada ou coluna sticky o título fica parado na tela, então não sai.
-    if (el.closest("[data-horizontal], [data-sticky]")) return;
+    // data-fade-stay: títulos do fim da página, que precisam continuar visíveis (Sinal 09).
+    if (el.closest("[data-horizontal], [data-sticky]") || el.hasAttribute("data-fade-stay")) return;
     gsap.to(el, {
       opacity: 0,
       y: -32,
@@ -270,62 +275,24 @@ function initTypography() {
 }
 
 /* ------------------------------------------------------------------ */
-/* 6. Preços: contador na entrada e chave "à vista −5%"                */
+/* 6. Preço: contador na entrada                                        */
 /* ------------------------------------------------------------------ */
 function initPrices() {
+  if (reduce) return;
   const fmt = (n: number) => Math.round(n).toLocaleString("pt-BR");
-  const toggle = document.querySelector<HTMLInputElement>("[data-vista-toggle]");
-  const status = $("[data-vista-status]");
-  const box = $("[data-investimento]");
-
-  const prices = $$("[data-count]").map((el) => ({
-    el,
-    sr: el.closest(".pack__price")?.querySelector<HTMLElement>("[data-price-sr]") ?? null,
-    full: Number(el.dataset.count),
-    vista: Number(el.dataset.vista),
-    state: { v: Number(el.dataset.count) },
-    started: reduce,
-  }));
-  type Price = (typeof prices)[number];
-
-  const target = (p: Price) => (toggle?.checked ? p.vista : p.full);
-  const render = (p: Price) => (p.el.textContent = fmt(p.state.v));
-  const tweenTo = (p: Price, duration: number, ease: string) =>
-    gsap.to(p.state, {
-      v: target(p),
-      duration: reduce ? 0 : duration,
-      ease,
-      overwrite: true,
-      onUpdate: () => render(p),
-      onComplete: () => render(p),
+  $$("[data-count]").forEach((el) => {
+    const state = { v: 0 };
+    const full = Number(el.dataset.count);
+    const render = () => (el.textContent = fmt(state.v));
+    render();
+    // end "max": nunca fica "depois do fim", então dispara mesmo se a página abrir no meio
+    ScrollTrigger.create({
+      trigger: el,
+      start: "top 94%",
+      end: "max",
+      once: true,
+      onEnter: () => gsap.to(state, { v: full, duration: 1.8, ease: "expo.out", onUpdate: render, onComplete: render }),
     });
-
-  if (!reduce) {
-    prices.forEach((p) => {
-      p.state.v = 0;
-      render(p);
-      // end "max": nunca fica "depois do fim", então dispara mesmo se a página abrir no meio
-      ScrollTrigger.create({
-        trigger: p.el,
-        start: "top 94%",
-        end: "max",
-        once: true,
-        onEnter: () => {
-          p.started = true;
-          tweenTo(p, 1.8, "expo.out");
-        },
-      });
-    });
-  }
-
-  toggle?.addEventListener("change", () => {
-    const on = toggle.checked;
-    box?.classList.toggle("is-vista", on);
-    prices.forEach((p) => {
-      if (p.sr) p.sr.textContent = `R$ ${fmt(target(p))}`;
-      if (p.started) tweenTo(p, 0.9, "power3.out");
-    });
-    if (status) status.textContent = on ? "Valores à vista, com 5% de desconto." : "Valores sem desconto.";
   });
 }
 

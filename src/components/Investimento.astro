@@ -1,106 +1,114 @@
 ---
 import p from "../data/proposta.json";
 const brl = (n: number) => n.toLocaleString("pt-BR");
+const k = p.plano;
+const vista = Math.round(k.valor * 0.95);
+const economia = k.valor - vista;
+const parcela = Math.round(k.valor / 4);
 ---
 <section id="investimento" class="section investimento tone-pink50 corners sheet" data-investimento>
-  <div class="wrap">
+  <div class="wrap investimento__inner">
     <div class="investimento__head">
-      <div>
-        <p class="label eyebrow">Sinal 06 · Investimento</p>
-        <h2 class="h2 investimento__title" data-fade>Três formas de começar. Uma recomendada.</h2>
-      </div>
-      <label class="switch">
-        <input class="switch__input" type="checkbox" role="switch" data-vista-toggle />
-        <span class="switch__track" aria-hidden="true"><span class="switch__thumb"></span></span>
-        <span class="label">Pagamento à vista na assinatura (−5%)</span>
-      </label>
+      <p class="label eyebrow">Sinal 06 · Investimento</p>
+      <h2 class="h2 investimento__title" data-fade>Um projeto. Um investimento.</h2>
     </div>
+
     <div class="investimento__grid">
-      {p.pacotes.map((k) => (
-        <article class:list={["pack", `tone-${k.tom}`, { "pack--destaque": k.destaque }]} data-card>
-          <header class="pack__head">
-            <span class="label pack__rotulo">{k.rotulo}</span>
-            <h3 class="pack__name">{k.nome}</h3>
-          </header>
-          <p class="pack__price">
-            <span class="sr-only" data-price-sr>R$ {brl(k.valor)}</span>
-            <span aria-hidden="true">
-              <span class="pack__cur">R$</span>
-              <span data-count={k.valor} data-vista={Math.round(k.valor * 0.95)}>{brl(k.valor)}</span>
-            </span>
-            <span class="label pack__off" aria-hidden="true">−5%</span>
-          </p>
+      <article class:list={["plan", `tone-${k.tom}`]} data-card>
+        <header class="plan__head">
+          <span class="label plan__rotulo">{k.rotulo}</span>
+          <h3 class="plan__name">{k.nome}</h3>
           <p class="label">{k.semanas} semanas · {k.horas} horas</p>
-          <ul>{k.itens.map((i) => <li>{i}</li>)}</ul>
-        </article>
-      ))}
+        </header>
+        <ul class="plan__list">{k.itens.map((i) => <li>{i}</li>)}</ul>
+      </article>
+
+      <aside class="pay tone-choc" data-card aria-labelledby="pay-title">
+        <p class="label pay__eyebrow" id="pay-title">Forma de pagamento</p>
+
+        <div class="pay__total">
+          <span class="label">Total do projeto</span>
+          <s class="pay__full">R$ {brl(k.valor)}</s>
+        </div>
+
+        <div class="pay__main">
+          <span class="label pay__badge">À vista na assinatura · −5%</span>
+          <p class="pay__price">
+            <span class="sr-only">R$ {brl(vista)}</span>
+            <span aria-hidden="true">
+              <span class="pay__cur">R$</span>
+              <span data-count={vista}>{brl(vista)}</span>
+            </span>
+          </p>
+          <p class="pay__note">Economia de R$ {brl(economia)} no pagamento integral na assinatura.</p>
+        </div>
+
+        <div class="pay__alt">
+          <span class="label">Ou parcelado</span>
+          <p><strong>4 × R$ {brl(parcela)}</strong> <span>(25% cada, sem desconto)</span></p>
+        </div>
+      </aside>
     </div>
-    <div class="investimento__foot">
-      <p class="label">Taxa-hora R$ 180 · impostos inclusos · válida até {p.validade}</p>
-      <p class="sr-only" aria-live="polite" data-vista-status></p>
-    </div>
+
+    <p class="label investimento__foot">Taxa-hora R$ 180 · impostos inclusos · válida até {p.validade}</p>
   </div>
 </section>
 
 <style>
-  .investimento__head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 28px 48px; }
-  .investimento__title { max-width: 16ch; }
-  .investimento__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gutter); margin-top: clamp(48px, 5vw, 80px); align-items: stretch; }
-  .pack {
-    position: relative;
-    border-radius: var(--radius); padding: clamp(24px, 2.4vw, 36px);
-    display: grid; gap: 20px; align-content: start;
-    border: 2px solid var(--baits-chocolate);
+  /* Tudo em uma tela no desktop */
+  .investimento { padding-block: clamp(88px, 11vh, 128px) clamp(48px, 7vh, 88px); }
+  @media (min-width: 901px) and (min-height: 640px) {
+    .investimento { min-height: 100vh; display: flex; align-items: center; }
+    .investimento__inner { width: 100%; }
   }
-  .pack--destaque { translate: 0 -16px; box-shadow: 0 0 0 3px var(--baits-chocolate), 0 24px 48px -24px color-mix(in srgb, var(--baits-chocolate) 55%, transparent); }
-  .pack--destaque .pack__rotulo { justify-self: start; background: var(--baits-chocolate); color: var(--baits-pink); padding: 6px 12px; border-radius: 999px; }
-  .pack__head { display: grid; gap: 10px; }
-  .pack__name { font-family: var(--font-display); font-weight: 800; font-size: clamp(2.25rem, 3.6vw, 3.5rem); line-height: 1; letter-spacing: -0.03em; }
-  .pack__price {
-    display: flex; align-items: start; flex-wrap: wrap; gap: 4px 10px;
-    font-family: var(--font-display); font-weight: 800; font-size: clamp(2.5rem, 4.4vw, 4.5rem);
-    line-height: 1; letter-spacing: -0.035em; font-variant-numeric: tabular-nums;
-    padding-block: 12px 4px;
+  .investimento__title { max-width: 18ch; font-size: min(var(--fs-h2), 8vh); }
+  .investimento__grid {
+    display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    gap: var(--gutter); margin-top: clamp(28px, 4.5vh, 56px); align-items: stretch;
   }
-  .pack__cur { font-size: 0.36em; letter-spacing: 0; vertical-align: top; margin-right: 6px; position: relative; top: 0.18em; }
-  .pack__off {
-    align-self: center; background: var(--baits-chocolate); color: var(--baits-yellow);
-    padding: 5px 10px; border-radius: 999px; letter-spacing: 0.08em;
-    opacity: 0; transform: translateY(6px) scale(0.9);
-    transition: opacity 0.4s var(--ease-out), transform 0.5s var(--ease-out);
-  }
-  .is-vista .pack__off { opacity: 1; transform: none; }
-  .pack ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
-  .pack li { border-top: 1.5px solid currentColor; padding-block: 10px; }
 
-  .investimento__foot { margin-top: clamp(32px, 3.4vw, 48px); }
+  .plan {
+    border-radius: var(--radius); border: 2px solid var(--baits-chocolate);
+    padding: clamp(24px, 2.4vw, 40px);
+    display: grid; gap: clamp(20px, 3vh, 32px); align-content: space-between;
+  }
+  .plan__head { display: grid; gap: 10px; }
+  .plan__rotulo { justify-self: start; background: var(--baits-chocolate); color: var(--baits-yellow); padding: 6px 12px; border-radius: 999px; }
+  .plan__name { font-family: var(--font-display); font-weight: 800; font-size: clamp(2.5rem, min(5vw, 9vh), 5rem); line-height: 1; letter-spacing: -0.035em; }
+  .plan__list {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--gutter);
+  }
+  .plan__list li { border-top: 1.5px solid currentColor; padding-block: clamp(8px, 1.3vh, 12px); }
 
-  .switch {
-    position: relative; display: inline-flex; align-items: center; gap: 14px; cursor: pointer;
-    padding: 10px 18px 10px 10px; border-radius: 999px;
-    border: 1.5px solid color-mix(in srgb, var(--baits-chocolate) 30%, transparent);
-    transition: border-color 0.3s var(--ease-out);
+  .pay {
+    border-radius: var(--radius); border: 2px solid var(--baits-chocolate);
+    padding: clamp(24px, 2.4vw, 40px);
+    display: flex; flex-direction: column; gap: clamp(18px, 2.6vh, 28px);
   }
-  .switch:hover { border-color: var(--baits-chocolate); }
-  .switch__input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
-  .switch__track {
-    position: relative; flex: none; width: 52px; height: 30px; border-radius: 999px;
-    border: 2px solid var(--baits-chocolate); background: transparent;
-    transition: background-color 0.35s var(--ease-out);
+  .pay__eyebrow { color: var(--baits-yellow); }
+  .pay__total { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-bottom: clamp(14px, 2vh, 22px); border-bottom: 1.5px solid color-mix(in srgb, var(--baits-pink) 35%, transparent); }
+  .pay__full { font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; letter-spacing: -0.02em; color: color-mix(in srgb, var(--baits-pink-50) 70%, transparent); text-decoration-thickness: 2px; }
+  .pay__main { display: grid; gap: 10px; }
+  .pay__badge { justify-self: start; background: var(--baits-yellow); color: var(--baits-chocolate); padding: 6px 12px; border-radius: 999px; }
+  .pay__price {
+    font-family: var(--font-display); font-weight: 800; font-size: clamp(3rem, min(5.4vw, 10vh), 5.5rem);
+    line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; color: var(--baits-pink);
+    padding-block: 6px 2px;
   }
-  .switch__thumb {
-    position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%;
-    background: var(--baits-chocolate);
-    transition: transform 0.45s var(--ease-out), background-color 0.35s var(--ease-out);
-  }
-  .switch__input:checked + .switch__track { background: var(--baits-chocolate); }
-  .switch__input:checked + .switch__track .switch__thumb { transform: translateX(22px); background: var(--baits-yellow); }
-  .switch:hover .switch__track { background: color-mix(in srgb, var(--baits-chocolate) 12%, transparent); }
-  .switch:hover .switch__input:checked + .switch__track { background: var(--baits-chocolate); }
-  .switch__input:focus-visible + .switch__track { outline: 3px solid var(--focus); outline-offset: 4px; }
+  .pay__cur { font-size: 0.34em; letter-spacing: 0; vertical-align: top; margin-right: 8px; position: relative; top: 0.2em; }
+  .pay__note { color: color-mix(in srgb, var(--baits-pink-50) 85%, transparent); max-width: 32ch; }
+  .pay__alt { margin-top: auto; display: grid; gap: 6px; padding-top: clamp(14px, 2vh, 22px); border-top: 1.5px solid color-mix(in srgb, var(--baits-pink) 35%, transparent); }
+  .pay__alt .label { color: var(--baits-yellow); }
+  .pay__alt strong { font-family: var(--font-title); font-size: 1.25rem; }
+  .pay__alt span:not(.label) { color: color-mix(in srgb, var(--baits-pink-50) 75%, transparent); }
+
+  .investimento__foot { margin-top: clamp(20px, 3vh, 36px); }
 
   @media (max-width: 900px) {
     .investimento__grid { grid-template-columns: 1fr; }
-    .pack--destaque { translate: none; }
+  }
+  @media (max-width: 520px) {
+    .plan__list { grid-template-columns: 1fr; }
   }
 </style>

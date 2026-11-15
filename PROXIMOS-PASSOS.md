@@ -3,6 +3,7 @@
 ## Onde paramos
 - Último trabalho: commit 742c833 na `main` (refino visual, animações, contraste AA, reduced motion, teclado).
 - `npm run build` passa local e no GitHub Actions.
+- Publicado também na Vercel: `astro.config.mjs` usa base `/` quando `VERCEL` está definido (Vercel) e `/proposta-comercial-baits` no GitHub Pages.
 - **Deploy ainda falha** em `actions/configure-pages`: o GitHub Pages não está habilitado no repositório.
 
 ## Pendências

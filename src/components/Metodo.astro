@@ -83,5 +83,21 @@ const total = String(p.fases.length).padStart(2, "0");
   /* Fixada em telas baixas (notebooks 720–820 px): título e nome da fase cedem um pouco para nada ser cortado */
   .metodo.is-pinned .h-head .h2 { font-size: min(var(--fs-h2), 6.4vh); }
   .metodo.is-pinned .panel__name { font-size: clamp(3rem, min(8.6vw, 11vh), 9rem); }
+  /* Fixada em telas de até ~760 px de altura (notebooks, tablets deitados): a lista de 5 atividades
+     era o que estourava o painel e jogava o checkpoint para fora do cartão */
+  @media (max-height: 760px) {
+    .metodo.is-pinned .panel { padding: clamp(18px, 3.4vh, 40px); row-gap: clamp(10px, 1.8vh, 20px); }
+    .metodo.is-pinned .panel__name { font-size: clamp(2.5rem, min(8vw, 9.5vh), 9rem); margin-block: 6px 10px; }
+    .metodo.is-pinned .panel .lead { font-size: clamp(1rem, 2.4vh, 1.25rem); }
+    .metodo.is-pinned .panel__list { gap: 4px; }
+    .metodo.is-pinned .panel__list li { font-size: 0.9375rem; line-height: 1.35; padding-bottom: 4px; }
+    .metodo.is-pinned .panel__cp { padding-top: 10px; }
+  }
+  @media (max-height: 620px) {
+    .metodo.is-pinned .h-head { margin-bottom: 16px; }
+    .metodo.is-pinned .panel__name { margin-block: 4px 6px; }
+    .metodo.is-pinned .panel__list li { font-size: 0.875rem; padding-bottom: 3px; }
+    .metodo.is-pinned .panel__cp { padding-top: 8px; }
+  }
   @media (max-width: 767px) { .panel { grid-template-columns: 1fr; min-height: 0; } }
 </style>

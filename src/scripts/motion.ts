@@ -10,6 +10,15 @@ const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 /** Momento (s) em que a cortina do preloader abre — casa com a animação CSS em global.css */
 const PRELOADER_OUT = 1.25;
 
+/** Refresh agrupado: várias mudanças de layout seguidas (fontes, re-quebra de linhas) viram um só */
+let refreshT = 0;
+let started = false;
+function scheduleRefresh() {
+  if (!started) return;
+  clearTimeout(refreshT);
+  refreshT = window.setTimeout(() => ScrollTrigger.refresh(), 150);
+}
+
 const $ = (sel: string, ctx: ParentNode = document) => ctx.querySelector<HTMLElement>(sel);
 const $$ = (sel: string, ctx: ParentNode = document) => Array.from(ctx.querySelectorAll<HTMLElement>(sel));
 
@@ -114,86 +123,133 @@ const updateRailUI = (section: HTMLElement, progress: number) => {
   }
 };
 
+/** O conteúdo de cada painel cabe na seção fixada (100vh)? Mede com a classe aplicada. */
+const PIN_MQ = "(min-width: 768px) and (min-height: 560px) and (prefers-reduced-motion: no-preference)";
+function fitsPinned(section: HTMLElement) {
+  const track = $("[data-track]", section);
+  if (!track) return false;
+  const had = section.classList.contains("is-pinned");
+  if (!had) section.classList.add("is-pinned");
+  // Cartões podem passar um pouco da faixa (Entregáveis centraliza), mas não podem
+  // invadir a cabeça nem sair da tela, e o conteúdo tem que caber no próprio cartão.
+  const head = $(".h-head", section)?.getBoundingClientRect().bottom ?? -Infinity;
+  const bottom = section.getBoundingClientRect().bottom - 4;
+  const ok = Array.from(track.children).every((c) => {
+    const r = c.getBoundingClientRect();
+    const inner = Math.max(...Array.from(c.children, (k) => k.getBoundingClientRect().bottom), -Infinity);
+    return c.scrollHeight <= c.clientHeight + 2 && inner <= r.bottom + 1 && r.top >= head && r.bottom <= bottom;
+  });
+  if (!had) section.classList.remove("is-pinned");
+  return ok;
+}
+
 function initRails() {
   const sections = $$("[data-horizontal]");
-  const mm = gsap.matchMedia();
+  let mm = gsap.matchMedia();
+  const pinned = new Set<HTMLElement>();
 
-  mm.add(
-    {
-      pin: "(min-width: 768px) and (min-height: 560px) and (prefers-reduced-motion: no-preference)",
-      native: "(max-width: 767px), (max-height: 559px), (prefers-reduced-motion: reduce)",
-    },
-    (ctx) => {
-      const { pin } = ctx.conditions as { pin: boolean };
-      const cleanups: Array<() => void> = [];
+  // Redimensionar pode fazer um trilho deixar de caber (ou voltar a caber): refaz os modos.
+  // Mede depois do refresh do ScrollTrigger, quando os pins já têm as medidas da nova tela.
+  let rebuilding = false;
+  ScrollTrigger.addEventListener("refresh", () => {
+    if (rebuilding || !window.matchMedia(PIN_MQ).matches) return;
+    if (!sections.some((s) => fitsPinned(s) !== pinned.has(s))) return;
+    rebuilding = true;
+    // Fora do próprio refresh: o ScrollTrigger não aceita um refresh aninhado
+    requestAnimationFrame(() => {
+      mm.revert();
+      mm = gsap.matchMedia();
+      setup();
+      ScrollTrigger.refresh();
+      rebuilding = false;
+    });
+  });
 
-      sections.forEach((section) => {
-        const track = $("[data-track]", section);
-        if (!track) return;
-        const viewport = track.parentElement!;
+  setup();
+  function setup() {
+    mm.add(
+      {
+        pin: PIN_MQ,
+        native: "(max-width: 767px), (max-height: 559px), (prefers-reduced-motion: reduce)",
+      },
+      (ctx) => {
+        const { pin } = ctx.conditions as { pin: boolean };
+        const cleanups: Array<() => void> = [];
 
-        if (!pin) {
-          const onScroll = () => {
-            const max = track.scrollWidth - track.clientWidth;
-            updateRailUI(section, max > 0 ? track.scrollLeft / max : 0);
-          };
-          track.addEventListener("scroll", onScroll, { passive: true });
-          onScroll();
-          cleanups.push(() => track.removeEventListener("scroll", onScroll));
-          return;
-        }
+        sections.forEach((section) => {
+          const track = $("[data-track]", section);
+          if (!track) return;
+          const viewport = track.parentElement!;
 
-        // A classe muda o layout (seção = 100vh); precisa vir antes de qualquer medida
-        section.classList.add("is-pinned");
-        track.removeAttribute("tabindex");
-        cleanups.push(() => {
-          section.classList.remove("is-pinned", "is-stuck");
-          track.setAttribute("tabindex", "0");
-        });
-
-        const distance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
-        const move = gsap.to(track, {
-          x: () => -distance(),
-          ease: "none",
-          scrollTrigger: {
-            trigger: section,
-            start: "top top",
-            end: () => "+=" + distance(),
-            pin: true,
-            scrub: 0.8,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-            toggleClass: "is-stuck",
-            onUpdate: (st) => updateRailUI(section, st.progress),
-          },
-        });
-
-        // Títulos dos painéis e barras do Gantt: os que já estão na tela entram com a seção;
-        // os que estão fora entram quando o trilho os traz (containerAnimation).
-        const vp = viewport.getBoundingClientRect();
-        $$("[data-panel-title], [data-bar]", track).forEach((item) => {
-          const isBar = item.hasAttribute("data-bar");
-          const onScreen = item.getBoundingClientRect().left < vp.right - vp.width * 0.06;
-          const st: ScrollTrigger.Vars = onScreen
-            ? { trigger: section, start: "top 55%", toggleActions: "play none none reverse" }
-            : { trigger: item, containerAnimation: move, start: "left 94%", toggleActions: "play none none reverse" };
-          if (isBar) {
-            gsap.fromTo(
-              item,
-              { clipPath: "inset(0% 100% 0% 0% round 999px)" },
-              { clipPath: "inset(0% 0% 0% 0% round 999px)", duration: 1, ease: "expo.out", scrollTrigger: st }
-            );
-          } else {
-            gsap.from(item, { x: 90, opacity: 0, duration: 1.1, ease: "expo.out", scrollTrigger: st });
+          // Fixar só se o conteúdo couber; senão a seção fica no carrossel nativo em vez de cortar texto
+          if (!pin || !fitsPinned(section)) {
+            const onScroll = () => {
+              const max = track.scrollWidth - track.clientWidth;
+              updateRailUI(section, max > 0 ? track.scrollLeft / max : 0);
+            };
+            track.addEventListener("scroll", onScroll, { passive: true });
+            onScroll();
+            cleanups.push(() => track.removeEventListener("scroll", onScroll));
+            return;
           }
-        });
-      });
 
-      // Quando os pins são recriados (resize), reordena para recalcular de cima para baixo
-      ScrollTrigger.sort();
-      return () => cleanups.forEach((fn) => fn());
-    }
-  );
+          // A classe muda o layout (seção = 100vh); precisa vir antes de qualquer medida
+          section.classList.add("is-pinned");
+          pinned.add(section);
+          track.removeAttribute("tabindex");
+          cleanups.push(() => {
+            pinned.delete(section);
+            section.classList.remove("is-pinned", "is-stuck");
+            track.setAttribute("tabindex", "0");
+          });
+
+          const distance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
+          const move = gsap.to(track, {
+            x: () => -distance(),
+            ease: "none",
+            scrollTrigger: {
+              trigger: section,
+              start: "top top",
+              end: () => "+=" + distance(),
+              pin: true,
+              scrub: 0.8,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+              toggleClass: "is-stuck",
+              onUpdate: (st) => updateRailUI(section, st.progress),
+            },
+          });
+
+          // Títulos dos painéis e barras do Gantt: os que já estão na tela entram com a seção;
+          // os que estão fora entram quando o trilho os traz (containerAnimation).
+          // Mede pela posição no trilho, não na tela: se a página abrir já rolada, o trilho
+          // está deslocado e todos os itens pareceriam "na tela".
+          const vpWidth = viewport.clientWidth;
+          const trackLeft = track.getBoundingClientRect().left;
+          $$("[data-panel-title], [data-bar]", track).forEach((item) => {
+            const isBar = item.hasAttribute("data-bar");
+            const onScreen = item.getBoundingClientRect().left - trackLeft < vpWidth * 0.94;
+            const st: ScrollTrigger.Vars = onScreen
+              ? { trigger: section, start: "top 55%", toggleActions: "play none none reverse" }
+              : { trigger: item, containerAnimation: move, start: "left 94%", toggleActions: "play none none reverse" };
+            if (isBar) {
+              gsap.fromTo(
+                item,
+                { clipPath: "inset(0% 100% 0% 0% round 999px)" },
+                { clipPath: "inset(0% 0% 0% 0% round 999px)", duration: 1, ease: "expo.out", scrollTrigger: st }
+              );
+            } else {
+              gsap.from(item, { x: 90, opacity: 0, duration: 1.1, ease: "expo.out", scrollTrigger: st });
+            }
+          });
+        });
+
+        // Quando os pins são recriados (resize), reordena para recalcular de cima para baixo
+        ScrollTrigger.sort();
+        return () => cleanups.forEach((fn) => fn());
+      }
+    );
+  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -204,13 +260,21 @@ function initTypography() {
 
   $$("[data-fade]").forEach((el) => {
     const inHero = !!el.closest(".hero");
+    // Título dentro de seção fixada: sem pinnedContainer o ScrollTrigger soma a duração do pin ao
+    // início quando mede com a página já rolada (reload/restauração de rolagem), e o título
+    // revertia — sumia — no meio do trilho ao rolar para cima.
+    const pinnedContainer = el.closest<HTMLElement>("[data-horizontal]") ?? undefined;
+    let firstSplit = true;
     SplitText.create(el, {
       type: "lines",
       mask: "lines",
       linesClass: "split-line",
       autoSplit: true,
-      onSplit: (self) =>
-        gsap.from(self.lines, {
+      onSplit: (self) => {
+        // Re-quebra (fonte que chegou, largura nova) muda alturas: remede os gatilhos e os pins
+        if (!firstSplit) scheduleRefresh();
+        firstSplit = false;
+        return gsap.from(self.lines, {
           yPercent: 110,
           opacity: 0,
           filter: "blur(8px)",
@@ -219,8 +283,16 @@ function initTypography() {
           ease: "expo.out",
           ...(inHero
             ? { delay: PRELOADER_OUT }
-            : { scrollTrigger: { trigger: el, start: "top 88%", toggleActions: "play none none reverse" } }),
-        }),
+            : {
+                scrollTrigger: {
+                  trigger: el,
+                  pinnedContainer,
+                  start: "top 88%",
+                  toggleActions: "play none none reverse",
+                },
+              }),
+        });
+      },
     });
 
     // Saída: só quando o bloco já está deixando a tela pelo topo.
@@ -309,7 +381,6 @@ function initPageProgress() {
 /* Ordem importa: pins primeiro (criam o espaço), depois o que vem       */
 /* abaixo deles, por último o que depende da altura total da página.     */
 /* ------------------------------------------------------------------ */
-let started = false;
 const start = () => {
   if (started) return;
   started = true;
@@ -323,3 +394,5 @@ document.fonts.ready.then(start);
 // Rede lenta: não segura a página esperando as fontes
 setTimeout(start, 2500);
 window.addEventListener("load", () => ScrollTrigger.refresh());
+// Fonte que chega depois do início muda a altura dos blocos: remede tudo
+document.fonts.addEventListener("loadingdone", scheduleRefresh);

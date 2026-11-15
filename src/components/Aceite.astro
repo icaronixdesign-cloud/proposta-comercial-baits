@@ -1,7 +1,7 @@
 ---
 import p from "../data/proposta.json";
 import { hasPublic } from "../lib/assets";
-const aceite = `https://wa.me/${p.whatsapp}?text=${encodeURIComponent("Olá, eu aceito a proposta da Bytes.")}`;
+const aceite = `https://wa.me/${p.whatsapp}?text=${encodeURIComponent(`Olá, eu aceito a proposta da ${p.cliente}.`)}`;
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const img = "img/braian-aceite.webp";
 const hasImg = hasPublic(img);
